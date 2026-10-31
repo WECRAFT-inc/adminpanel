@@ -1098,6 +1098,33 @@
 .pm-addlink { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px dashed var(--border-hi); border-radius: var(--r-lg); }
 .pm-danger { margin-top: 4px; }
 @media (max-width: 900px) { .pm-eco { grid-template-columns: 1fr; } .pm-search { margin-left: 0; max-width: none; flex: 1; } }
+
+/* ═══ Quêtes ═══ */
+#qs-editor { margin: 12px 0; }
+#qs-editor[hidden] { display: none; }
+.qs-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.qs-form label { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-xs); color: var(--muted); }
+.qs-form small { color: var(--muted); font-size: var(--fs-2xs); }
+.qs-form .wide { grid-column: 1 / -1; }
+.qs-form label.qs-chk { flex-direction: row; align-items: center; gap: 8px; color: var(--text); font-size: var(--fs-md); }
+.qs-sum { margin: 12px 0 4px; padding: 8px 12px; border-radius: var(--radius); background: var(--surface); border: 1px dashed var(--border-hi); font-size: var(--fs-sm); color: var(--muted); }
+.qs-errors { list-style: none; margin: 6px 0 0; padding: 0; color: var(--red); font-size: var(--fs-sm); }
+.qs-errors:empty { display: none; }
+.qs-errors li::before { content: '⚠ '; }
+.qs-c { padding: 10px 12px !important; vertical-align: middle; }
+.qs-sw { position: relative; display: inline-block; width: 38px; height: 22px; }
+.qs-sw input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.qs-sw span { position: absolute; inset: 0; border-radius: 22px; background: var(--border-hi); transition: background .15s; pointer-events: none; }
+.qs-sw span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.qs-sw input:checked + span { background: var(--green); }
+.qs-sw input:checked + span::after { transform: translateX(16px); }
+.qs-sw input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.qs-st { display: inline-block; padding: 2px 9px; border-radius: var(--r-pill); font-size: var(--fs-xs); font-weight: 600; background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.qs-st.live { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.qs-st.scheduled { background: var(--amber-bg); color: var(--amber); border-color: transparent; }
+.qs-mk { font-size: var(--fs-2xs); font-weight: 700; padding: 1px 6px; border-radius: var(--r-pill); text-transform: uppercase; letter-spacing: .04em; }
+.qs-mk.new { background: var(--green-bg); color: var(--green); } .qs-mk.mod { background: var(--amber-bg); color: var(--amber); }
+.pm-ic:disabled { opacity: .3; cursor: default; }
 </style>
 </head>
 <body>
@@ -1181,6 +1208,9 @@
         </button>
         <button class="nav-item" data-page="sites" onclick="showPage('sites')">
           <span class="ico">🌐</span> Sites &amp; visibilité
+        </button>
+        <button class="nav-item" data-page="quests" onclick="showPage('quests')">
+          <span class="ico">📜</span> Quêtes
         </button>
         </div>
       </div>
@@ -1327,6 +1357,25 @@
       </div>
       <div id="pm-undo" class="pm-undo" hidden></div>
       <div id="pm-body"></div>
+    </div>
+
+    <!-- ── Page Quêtes (GET/PUT /admin/quests) ── -->
+    <div id="page-quests" class="page">
+      <div class="page-header">
+        <h2>Quêtes</h2>
+        <span id="qs-state" class="pm-sync" role="status" aria-live="polite">⏳ Chargement…</span>
+        <div class="pm-hdr-actions">
+          <button class="btn-action btn-link" data-qs-act="reload" title="Recharger depuis le serveur" aria-label="Recharger">↻</button>
+          <button class="btn-action btn-link" data-qs-act="export">⬇ Export JSON</button>
+          <button class="btn-action btn-link" data-qs-act="import">⬆ Importer</button>
+          <input type="file" id="qs-imp" accept="application/json,.json" hidden>
+          <button class="btn-action btn-unlock" data-qs-act="new">+ Nouvelle quête</button>
+          <button class="btn-action btn-primary" id="qs-publish" data-qs-act="publish" disabled>🚀 Publier</button>
+        </div>
+      </div>
+      <div id="qs-note" class="pm-note" hidden></div>
+      <div id="qs-editor" class="card" hidden></div>
+      <div id="qs-list"></div>
     </div>
 
     <!-- ── Page Utilisateurs ── -->
@@ -1870,7 +1919,7 @@
       </div>
     </div>
 
-    <!-- ── Page Serveur de jeu & classements (GET /server, /leaderboard*, /clans) ── -->
+    <!-- ── Page Serveur de jeu & classements (GET /server, /leaderboard*) ── -->
     <div id="page-gamedata" class="page">
       <div class="page-header">
         <h2>Serveur &amp; classements</h2>
@@ -1883,16 +1932,16 @@
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
           <div class="subtabs u-m-0" id="gd-tabs">
-            <button class="subtab active" data-gd="kills" onclick="gdTab('kills')">⚔️ Kills</button>
-            <button class="subtab" data-gd="blocs_poses" onclick="gdTab('blocs_poses')">🧱 Blocs posés</button>
-            <button class="subtab" data-gd="fortune" onclick="gdTab('fortune')">💰 Fortune</button>
+            <button class="subtab active" data-gd="eclats" onclick="gdTab('eclats')">💎 Éclats</button>
             <button class="subtab" data-gd="referrals" onclick="gdTab('referrals')">🤝 Parrains</button>
             <button class="subtab" data-gd="streak" onclick="gdTab('streak')">🔥 Streaks</button>
-            <button class="subtab" data-gd="clans" onclick="gdTab('clans')">🏰 Clans</button>
           </div>
+          <div class="pm-bar u-m-0">
+          <select id="gd-scope" onchange="gdTab(GD_TAB)" aria-label="Filtrer par site ou serveur" style="max-width:220px;"><option value="all">🌍 Tout (global)</option></select>
           <select id="gd-limit" onchange="gdTab(GD_TAB)" style="max-width:120px;">
             <option value="10">Top 10</option><option value="25">Top 25</option><option value="50">Top 50</option>
           </select>
+          </div>
         </div>
         <div id="gd-meta" class="u-muted-fs-12-mb-10"></div>
         <div class="table-wrap" id="gd-table"></div>
@@ -6888,7 +6937,7 @@ async function loadRpNames(reset = true) {
 }
 
 // ── Serveur de jeu & classements ──────────────────────────────────────────
-let GD_TAB = 'kills';
+let GD_TAB = 'eclats';
 
 function gdBar(label, used, limit, fmt) {
   const pct = limit > 0 ? Math.min(100, used / limit * 100) : 0;
@@ -6930,19 +6979,55 @@ function gdPlayerCell(r) {
 }
 const gdRank = n => n === 1 ? '🥇' : n === 2 ? '🥈' : n === 3 ? '🥉' : `#${n}`;
 
-function gdClans(list) {
-  if (!Array.isArray(list) || !list.length) return `<div class="empty-state">Aucun clan synchronisé.</div>`;
-  const cols = [];
-  list.forEach(c => Object.keys(c || {}).forEach(k => { if (!cols.includes(k)) cols.push(k); }));
-  const show = cols.slice(0, 8);
-  const cell = v => {
-    if (v === null || v === undefined) return '<span class="u-muted">—</span>';
-    if (Array.isArray(v)) return `<span title="${esc(JSON.stringify(v).slice(0, 400))}">${v.length} élément${v.length > 1 ? 's' : ''}</span>`;
-    if (typeof v === 'object') return `<span title="${esc(JSON.stringify(v).slice(0, 400))}">{…}</span>`;
-    return esc(String(v));
-  };
-  return gdTable(show.map(esc), list.map(c => `<tr>${show.map(k => `<td>${cell((c || {})[k])}</td>`).join('')}</tr>`))
-    + (cols.length > show.length ? `<p class="u-muted-fs-11-mt-8">${cols.length - show.length} colonne(s) masquée(s) : ${esc(cols.slice(show.length).join(', '))}</p>` : '');
+// ── Portée : filtrer chaque classement par site ou par serveur Minecraft ──
+let GD_SCOPES = null;   // { sites:[{slug,name}], servers:[{slug,name,emoji}] }
+async function gdLoadScopes() {
+  const sel = nxEl('gd-scope'); if (!sel) return;
+  if (!GD_SCOPES) {
+    const [s, m] = await Promise.all([apiFetch('/admin/sites'), apiFetch('/admin/mc-servers')]);
+    GD_SCOPES = { sites: s.error ? [] : (s.sites || []), servers: m.error ? [] : (m.servers || []) };
+  }
+  const cur = sel.value || 'all', o = (v, t) => `<option value="${esc(v)}">${esc(t)}</option>`;
+  sel.innerHTML = o('all', '🌍 Tout (global)')
+    + (GD_SCOPES.sites.length ? `<optgroup label="Sites">${GD_SCOPES.sites.map(x => o('site:' + x.slug, '🌐 ' + x.name)).join('')}</optgroup>` : '')
+    + (GD_SCOPES.servers.length ? `<optgroup label="Serveurs Minecraft">${GD_SCOPES.servers.map(x => o('server:' + x.slug, (x.emoji || '⛏️') + ' ' + x.name)).join('')}</optgroup>` : '');
+  sel.value = [...sel.options].some(x => x.value === cur) ? cur : 'all';
+}
+function gdScope() { const v = nxVal('gd-scope') || 'all', i = v.indexOf(':'); return i < 0 ? null : { value: v, kind: v.slice(0, i), slug: v.slice(i + 1) }; }
+const gdQS = sc => sc ? `&${sc.kind}=${encodeURIComponent(sc.slug)}` : '';
+// Le Worker doit confirmer le filtre (champ "scope") : sinon on n'affiche rien plutôt que des chiffres globaux sous un faux filtre.
+const gdScopeOk = (d, sc) => !sc || d.scope === sc.value;
+const gdScopeMsg = sc => `<div class="empty-state">Le Worker n’applique pas encore le filtre « ${esc(sc.value)} » : rien n’est affiché pour ne pas montrer des chiffres globaux sous un faux filtre.<br><small>À ajouter côté Worker : accepter <code>?${esc(sc.kind)}=${esc(sc.slug)}</code> sur <code>/leaderboard*</code> et renvoyer <code>"scope": "${esc(sc.value)}"</code>.</small></div>`;
+// Classement par éclats : route dédiée du Worker si elle existe, sinon calcul depuis la liste des membres.
+const ECL_CACHE = { at: 0, rows: null };
+function gdRankRows(list, get) {   // classement « compétition » : à égalité, même rang
+  let prev = null, rank = 0;
+  return list.map((r, i) => { const v = get(r); if (v !== prev) { rank = i + 1; prev = v; } return Object.assign({}, r, { rank }); });
+}
+async function gdEclatsFromUsers() {
+  if (ECL_CACHE.rows && Date.now() - ECL_CACHE.at < 60000) return ECL_CACHE.rows;
+  const all = []; let offset = 0, total = Infinity;
+  while (all.length < total && all.length < 5000) {
+    const d = await apiFetch(`/admin/users?limit=100&offset=${offset}`);
+    if (d.error) throw d;
+    const u = Array.isArray(d.users) ? d.users : [];
+    total = d.total || u.length; all.push(...u);
+    if (!u.length) break; offset += u.length;
+  }
+  const rows = all.filter(u => Number(u.eclats) > 0 && u.status !== 'banned').sort((a, b) => Number(b.eclats) - Number(a.eclats));
+  ECL_CACHE.at = Date.now(); ECL_CACHE.rows = { rows, scanned: all.length };
+  return ECL_CACHE.rows;
+}
+async function gdEclats(limit, sc) {
+  const d = await apiFetch(`/leaderboard?type=eclats&limit=${limit}${gdQS(sc)}`);
+  // On n'accepte la réponse du Worker que si chaque ligne porte bien un solde d'éclats
+  // (un type inconnu peut renvoyer le classement par défaut).
+  if (!d.error && Array.isArray(d.results) && (d.results.length || sc) && d.results.every(r => typeof r.eclats === 'number') && gdScopeOk(d, sc)) {
+    return { rows: gdRankRows(d.results, r => r.eclats), src: 'worker', updated: d.updated_at };
+  }
+  if (sc) { const e = new Error('Filtre non pris en charge'); e.scopeUnsupported = true; throw e; }   // la liste des membres ne connaît pas leurs sites
+  const r = await gdEclatsFromUsers();
+  return { rows: gdRankRows(r.rows.slice(0, limit), u => Number(u.eclats)), src: 'users', scanned: r.scanned };
 }
 
 async function gdTab(tab) {
@@ -6950,34 +7035,40 @@ async function gdTab(tab) {
   document.querySelectorAll('#gd-tabs .subtab').forEach(b => b.classList.toggle('active', b.dataset.gd === tab));
   const box = nxEl('gd-table'), meta = nxEl('gd-meta');
   box.innerHTML = `<div class="empty-state"><span class="spinner"></span>Chargement…</div>`; meta.textContent = '';
-  const limit = nxVal('gd-limit') || '10';
-  const path = tab === 'referrals' ? `/leaderboard/referrals?limit=${limit}`
-    : tab === 'streak' ? `/leaderboard/streak?limit=${limit}`
-    : tab === 'clans' ? '/clans'
-    : `/leaderboard?type=${tab}&limit=${limit}`;
+  const limit = Number(nxVal('gd-limit')) || 10, sc = gdScope();
+  const lbl = sc ? ' · Filtre : ' + (nxEl('gd-scope').selectedOptions[0] || {}).textContent : '';
+  if (tab === 'eclats') {
+    let r;
+    try { r = await gdEclats(limit, sc); }
+    catch (e) { if (GD_TAB === tab) box.innerHTML = e.scopeUnsupported ? gdScopeMsg(sc) : `<div class="empty-state">${esc(errMsg(e))}</div>`; return; }
+    if (GD_TAB !== tab) return;
+    meta.textContent = r.src === 'worker'
+      ? (r.updated ? `Dernière mise à jour : ${fmtDate(r.updated)}` : '')
+      : `Calculé depuis la liste des membres (${r.scanned} comptes analysés, actualisé toutes les minutes). Le Worker n’expose pas encore /leaderboard?type=eclats.`;
+    if (lbl) meta.textContent += lbl;
+    box.innerHTML = gdTable(['Rang', 'Joueur', '💎 Éclats'], r.rows.map(u => {
+      const off = u.status && u.status !== 'active' ? ` <span class="badge-status badge-suspended">${esc(u.status)}</span>` : '';
+      return `<tr><td>${gdRank(u.rank)}</td><td>${gdPlayerCell(u)}${off}</td><td><strong>💎 ${Number(u.eclats || 0).toLocaleString()}</strong></td></tr>`;
+    }));
+    return;
+  }
+  const path = (tab === 'referrals' ? `/leaderboard/referrals?limit=${limit}` : `/leaderboard/streak?limit=${limit}`) + gdQS(sc);
   const d = await apiFetch(path);
   if (GD_TAB !== tab) return; // l'utilisateur a changé d'onglet entre-temps
   if (d.error) { box.innerHTML = `<div class="empty-state">${esc(errMsg(d))}</div>`; return; }
-  if (tab === 'clans') { box.innerHTML = gdClans(Array.isArray(d) ? d : (d.data || [])); return; }
+  if (!gdScopeOk(d, sc)) { box.innerHTML = gdScopeMsg(sc); return; }
   const res = d.results || [];
-  if (d.updated_at) meta.textContent = `Dernière mise à jour des stats : ${fmtDate(d.updated_at)}`;
+  meta.textContent = (d.updated_at ? `Dernière mise à jour des stats : ${fmtDate(d.updated_at)}` : '') + lbl;
   if (tab === 'referrals') {
     box.innerHTML = gdTable(['Rang', 'Parrain', 'Filleuls validés'], res.map(r =>
       `<tr><td>${gdRank(r.rank)}</td><td>${gdPlayerCell(r)}</td><td><strong>${r.referral_count}</strong></td></tr>`));
-  } else if (tab === 'streak') {
+  } else {
     box.innerHTML = gdTable(['Rang', 'Joueur', 'Série en cours', 'Record'], res.map(r =>
       `<tr><td>${gdRank(r.rank)}</td><td>${gdPlayerCell(r)}</td><td><strong>🔥 ${r.current_streak}</strong></td><td>${r.longest_streak}</td></tr>`));
-  } else {
-    const hi = k => `style="${tab === k ? 'font-weight:700;color:var(--accent);' : ''}"`;
-    box.innerHTML = gdTable(['Rang', 'Joueur', 'Dynastie', 'Kills', 'Morts', 'K/D', 'Blocs posés', 'Fortune'], res.map(r => {
-      const kd = r.deaths > 0 ? (r.kills / r.deaths).toFixed(2) : (r.kills || 0).toFixed(2);
-      return `<tr><td>${gdRank(r.rank)}</td><td>${gdPlayerCell(r)}${r.discord_id ? '' : ' <span class="badge-mc-unlinked">non lié</span>'}</td>
-        <td>${esc(r.dynasty || '—')}</td><td ${hi('kills')}>${(r.kills || 0).toLocaleString()}</td><td>${(r.deaths || 0).toLocaleString()}</td><td>${kd}</td>
-        <td ${hi('blocs_poses')}>${(r.blocs_poses || 0).toLocaleString()}</td><td ${hi('fortune')}>${Number(r.fortune || 0).toLocaleString()}</td></tr>`;
-    }));
   }
 }
-function loadGameData() { loadGameServer(); gdTab(GD_TAB); }
+
+async function loadGameData() { loadGameServer(); GD_SCOPES = null; await gdLoadScopes(); gdTab(GD_TAB); }
 
 // ── Cohérence des identités ───────────────────────────────────────────────
 async function loadIdentities() {
@@ -7027,7 +7118,7 @@ async function loadIdentities() {
     const it = _cp();
     [
       ['rpnames', '🎭', 'Noms RP', 'Historique des noms et pseudonymes', 'rp wathe nom pseudo identité roleplay'],
-      ['gamedata', '🏆', 'Serveur & classements', 'État du serveur, tops, clans', 'classement leaderboard kills fortune clans parrains streak pterodactyl ram cpu'],
+      ['gamedata', '🏆', 'Serveur & classements', 'État du serveur, top éclats, parrains, streaks', 'classement leaderboard éclats parrains streak pterodactyl ram cpu'],
       ['identities', '🧬', 'Cohérence des identités', 'Contrôle users / identities', 'identités discord minecraft incohérence orphelin'],
     ].forEach(x => it.push({ group: 'Pages', id: 'page:' + x[0], ico: x[1], label: x[2], hint: x[3], kw: x[4], run: () => showPage(x[0]) }));
     return it;
@@ -7568,6 +7659,257 @@ var _cp = cpBuildItems;
 cpBuildItems = function () {
   var it = _cp();
   it.push({ group: 'Pages', id: 'page:project', ico: '🗂️', label: 'Gestion du projet', hint: 'Finances, écosystème, comptes & accès', kw: 'projet finances dépenses gains budget tableur carte mentale écosystème comptes accès domaine scaleway', run: function () { showPage('project'); } });
+  return it;
+};
+})();
+</script>
+
+<script>
+// ── Quêtes : éditeur + publication (config à distance) ──
+// Le jeu / launcher lit la liste publiée ; le panel travaille sur un brouillon et publie en une fois (versionné).
+(function () {
+'use strict';
+var KEY = 'relink_quests_draft_v1', EP = '/admin/quests', MAX = 200, REWARD_WARN = 5000;
+var OBJ = {   // [libellé, unité, exemple de cible]
+  kill: ['Tuer', 'mob(s)', 'minecraft:zombie'], 'break': ['Miner / casser', 'bloc(s)', 'minecraft:diamond_ore'], place: ['Poser', 'bloc(s)', 'minecraft:oak_planks'],
+  craft: ['Fabriquer', 'objet(s)', 'minecraft:iron_pickaxe'], collect: ['Récolter / obtenir', 'objet(s)', 'minecraft:wheat'], fish: ['Pêcher', 'poisson(s)', ''],
+  explore: ['Explorer', 'biome(s)', 'minecraft:desert'], playtime: ['Temps de jeu', 'minute(s)', ''], custom: ['Personnalisée (gérée côté jeu)', 'fois', '']
+};
+var REPEAT = [['once', 'Une seule fois'], ['daily', 'Quotidienne'], ['weekly', 'Hebdomadaire']];
+
+/*PURE_START*/
+function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function str(v, n) { return String(v == null ? '' : v).slice(0, n); }
+function slugify(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40); }
+function validDate(s) { if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return false; var d = new Date(s + 'T00:00:00Z'); return !isNaN(d) && d.toISOString().slice(0, 10) === s; }
+function toInt(v, d) { var n = Math.floor(Number(v)); return isFinite(n) ? n : d; }
+function normQuest(q) {
+  q = q && typeof q === 'object' ? q : {};
+  return {
+    id: String(q.id || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40), name: str(q.name, 60).trim(), description: str(q.description, 300).trim(),
+    type: OBJ[q.type] ? q.type : 'custom', targetId: str(q.targetId, 80).trim(), amount: toInt(q.amount, 1), reward: toInt(q.reward, 0),
+    repeat: ['once', 'daily', 'weekly'].indexOf(q.repeat) >= 0 ? q.repeat : 'once',
+    startsAt: validDate(q.startsAt) ? q.startsAt : '', endsAt: validDate(q.endsAt) ? q.endsAt : '', active: q.active === true
+  };
+}
+function validateQuest(q, others) {
+  var e = [];
+  if (!/^[a-z0-9][a-z0-9_-]{1,39}$/.test(q.id)) e.push('Identifiant invalide (2 à 40 caractères : a-z, 0-9, _ ou -).');
+  else if (others.some(function (o) { return o.id === q.id; })) e.push('Cet identifiant est déjà utilisé par une autre quête.');
+  if (!q.name) e.push('Donne un nom à la quête.');
+  if (q.targetId && !/^[a-z0-9_.:\/-]{1,80}$/i.test(q.targetId)) e.push('Cible invalide (exemple : minecraft:zombie).');
+  if (!(Number.isInteger(q.amount) && q.amount >= 1 && q.amount <= 1000000)) e.push('Quantité : un nombre entier entre 1 et 1 000 000.');
+  if (!(Number.isInteger(q.reward) && q.reward >= 0 && q.reward <= 100000)) e.push('Récompense : un nombre entier d’éclats entre 0 et 100 000.');
+  if (q.startsAt && q.endsAt && q.startsAt > q.endsAt) e.push('La date de fin est avant la date de début.');
+  return e;
+}
+function questStatus(q, today) {
+  if (!q.active) return 'off';
+  if (q.startsAt && today < q.startsAt) return 'scheduled';
+  if (q.endsAt && today > q.endsAt) return 'ended';
+  return 'live';
+}
+function summary(q) { var o = OBJ[q.type] || OBJ.custom; return o[0] + ' ' + Number(q.amount || 0).toLocaleString('fr-FR') + ' ' + (q.targetId || o[1]); }
+function fmtD(s) { return s ? s.split('-').reverse().join('/') : ''; }
+function period(q) { return q.startsAt && q.endsAt ? fmtD(q.startsAt) + ' → ' + fmtD(q.endsAt) : q.startsAt ? 'dès le ' + fmtD(q.startsAt) : q.endsAt ? 'jusqu’au ' + fmtD(q.endsAt) : 'Permanente'; }
+function uniqueId(base, taken) { base = slugify(base) || 'quete'; var id = base, n = 2; while (taken.indexOf(id) >= 0) { id = (base + '_' + n).slice(0, 40); n++; } return id; }
+function diff(cur, pub) {
+  var byId = {}; pub.forEach(function (p) { byId[p.id] = JSON.stringify(p); });
+  var r = { added: [], changed: [], removed: [] }, seen = {};
+  cur.forEach(function (c) { seen[c.id] = 1; if (!(c.id in byId)) r.added.push(c.id); else if (byId[c.id] !== JSON.stringify(c)) r.changed.push(c.id); });
+  pub.forEach(function (p) { if (!seen[p.id]) r.removed.push(p.id); });
+  r.orderChanged = !r.added.length && !r.removed.length && !r.changed.length && JSON.stringify(cur.map(function (c) { return c.id; })) !== JSON.stringify(pub.map(function (c) { return c.id; }));
+  return r;
+}
+/*PURE_END*/
+
+var Q = { list: [], pub: [], version: 0, mode: 'loading', editing: null, filter: '', meta: null }, loaded = false;
+function $(id) { return document.getElementById(id); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function toast(m, t) { if (window.toast) window.toast(m, t || 'success'); }
+function today() { var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+function dirty() { return JSON.stringify(Q.list) !== JSON.stringify(Q.pub); }
+function readDraft() { try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+function writeDraft() { try { if (dirty()) localStorage.setItem(KEY, JSON.stringify({ base: Q.version, quests: Q.list })); else localStorage.removeItem(KEY); } catch (e) {} }
+function dl(name, mime, text) { var a = document.createElement('a'), u = URL.createObjectURL(new Blob([text], { type: mime })); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 1000); }
+
+/* ───────── Chargement ───────── */
+async function qsOpen(force) {
+  if (loaded && !force) { render(); return; }
+  state();
+  var d; try { d = await window.apiFetch(EP); } catch (e) { d = { error: 'réseau' }; }
+  if (d && !d.error && Array.isArray(d.quests)) { Q.pub = d.quests.slice(0, MAX).map(normQuest); Q.version = d.version || 0; Q.mode = 'server'; Q.meta = { at: d.updated_at, by: d.updated_by }; }
+  else { Q.pub = []; Q.version = 0; Q.mode = 'local'; Q.meta = null; }
+  var dr = readDraft();
+  if (dr && dr.base === Q.version && Array.isArray(dr.quests)) Q.list = dr.quests.slice(0, MAX).map(normQuest);
+  else { Q.list = clone(Q.pub); if (dr) { try { localStorage.removeItem(KEY); } catch (e) {} toast('Un ancien brouillon local (version périmée) a été ignoré.', 'error'); } }
+  loaded = true; render();
+}
+function state() {
+  var el = $('qs-state'), btn = $('qs-publish'), note = $('qs-note'); if (!el) return;
+  var s, t;
+  if (Q.mode === 'loading') { s = 'loading'; t = '⏳ Chargement…'; }
+  else if (Q.mode === 'local') { s = 'local'; t = '💾 Brouillon local · publication indisponible'; }
+  else if (dirty()) { s = 'pending'; t = '✏️ Modifications non publiées'; }
+  else { s = 'server'; t = '☁️ Publié · v' + Q.version; }
+  el.textContent = t; el.dataset.s = s;
+  if (btn) { btn.disabled = Q.mode !== 'server' || !dirty(); btn.title = Q.mode !== 'server' ? 'La route PUT /admin/quests n’existe pas encore sur le Worker.' : (dirty() ? 'Publier les quêtes aux joueurs' : 'Rien à publier'); }
+  if (note) {
+    note.hidden = Q.mode !== 'local';
+    if (Q.mode === 'local') note.innerHTML = '<b>Publication indisponible.</b> Le Worker n’a pas encore la route <code>GET/PUT /admin/quests</code>. Tu peux préparer les quêtes (brouillon enregistré dans ce navigateur) et <b>exporter le JSON</b>, mais pas les publier aux joueurs.';
+  }
+}
+
+/* ───────── Rendu ───────── */
+function render() {
+  if (!$('qs-list')) return;
+  state();
+  var t = today(), q = Q.filter.trim().toLowerCase(), df = diff(Q.list, Q.pub), pubIds = {}; Q.pub.forEach(function (p) { pubIds[p.id] = JSON.stringify(p); });
+  var live = Q.list.filter(function (x) { return questStatus(x, t) === 'live'; }).length;
+  var bits = [];
+  if (df.added.length) bits.push(df.added.length + ' nouvelle' + (df.added.length > 1 ? 's' : ''));
+  if (df.changed.length) bits.push(df.changed.length + ' modifiée' + (df.changed.length > 1 ? 's' : ''));
+  if (df.removed.length) bits.push(df.removed.length + ' supprimée' + (df.removed.length > 1 ? 's' : ''));
+  if (df.orderChanged) bits.push('ordre modifié');
+  var head = '<div class="pm-bar"><span class="pm-hint u-m-0">' + Q.list.length + ' quête' + (Q.list.length > 1 ? 's' : '') + ' · ' + live + ' en cours' + (bits.length ? ' · <b>' + E(bits.join(', ')) + '</b> à publier' : '') + '</span>' +
+    (dirty() ? '<button class="btn-action btn-link" data-qs-act="revert">↩ Annuler les modifications</button>' : '') +
+    '<input type="search" id="qs-q" class="pm-search" placeholder="Filtrer (nom, identifiant, cible…)" aria-label="Filtrer les quêtes" value="' + E(Q.filter) + '"></div>';
+  var rows = Q.list.map(function (x, i) {
+    if (q && [x.name, x.id, x.description, x.targetId].join(' ').toLowerCase().indexOf(q) < 0) return '';
+    var st = questStatus(x, t), mark = !(x.id in pubIds) ? '<span class="qs-mk new">Nouveau</span>' : pubIds[x.id] !== JSON.stringify(x) ? '<span class="qs-mk mod">Modifié</span>' : '';
+    return '<tr data-id="' + E(x.id) + '"><td class="qs-c"><label class="qs-sw" title="Activer / désactiver"><input type="checkbox" data-qs-toggle="' + E(x.id) + '"' + (x.active ? ' checked' : '') + ' aria-label="Quête active"><span></span></label></td>' +
+      '<td class="qs-c"><b>' + E(x.name) + '</b> ' + mark + '<br><small class="u-muted">' + E(x.id) + '</small></td>' +
+      '<td class="qs-c">' + E(summary(x)) + '<br><small class="u-muted">' + E(REPEAT.filter(function (r) { return r[0] === x.repeat; })[0][1]) + '</small></td>' +
+      '<td class="qs-c num"><b>💎 ' + x.reward.toLocaleString('fr-FR') + '</b></td><td class="qs-c">' + E(period(x)) + '</td>' +
+      '<td class="qs-c"><span class="qs-st ' + st + '">' + { off: 'Désactivée', scheduled: 'Programmée', live: 'En cours', ended: 'Terminée' }[st] + '</span></td>' +
+      '<td class="pm-act"><button class="pm-ic" data-qs-act="up" data-id="' + E(x.id) + '" title="Monter" aria-label="Monter"' + (i === 0 ? ' disabled' : '') + '>↑</button><button class="pm-ic" data-qs-act="down" data-id="' + E(x.id) + '" title="Descendre" aria-label="Descendre"' + (i === Q.list.length - 1 ? ' disabled' : '') + '>↓</button>' +
+      '<button class="pm-ic" data-qs-act="edit" data-id="' + E(x.id) + '" title="Modifier" aria-label="Modifier">✎</button><button class="pm-ic" data-qs-act="dup" data-id="' + E(x.id) + '" title="Dupliquer" aria-label="Dupliquer">⧉</button>' +
+      '<button class="pm-ic" data-qs-act="del" data-id="' + E(x.id) + '" title="Supprimer du brouillon" aria-label="Supprimer">✕</button></td></tr>';
+  }).join('');
+  var removed = Q.pub.filter(function (p) { return df.removed.indexOf(p.id) >= 0; });
+  $('qs-list').innerHTML = head + (Q.list.length ? '<div class="pm-tw"><table class="pm-grid"><thead><tr><th>Actif</th><th>Quête</th><th>Objectif</th><th class="num">Récompense</th><th>Période</th><th>État</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="7" class="pm-empty">Aucune quête ne correspond au filtre.</td></tr>') + '</tbody></table></div>'
+    : '<div class="card"><div class="empty-state">Aucune quête pour l’instant. Crée la première avec « + Nouvelle quête ».</div></div>') +
+    (removed.length ? '<p class="pm-hint">Supprimées du brouillon (retirées au prochain « Publier ») : ' + removed.map(function (r) { return '<code>' + E(r.id) + '</code>'; }).join(', ') + '</p>' : '') +
+    '<p class="pm-hint">Les modifications restent dans un <b>brouillon</b> tant que tu ne cliques pas sur « Publier ». Les dates sont inclusives et suivent le fuseau du serveur de jeu. L’identifiant d’une quête publiée ne change plus : le jeu s’en sert pour suivre la progression des joueurs.</p>';
+  renderEditor();
+}
+
+/* ───────── Éditeur ───────── */
+function blank() { return { id: '', name: '', description: '', type: 'kill', targetId: '', amount: '10', reward: '50', repeat: 'once', startsAt: '', endsAt: '', active: false }; }
+function cand(d) { return { id: d.id, name: d.name.trim(), description: d.description.trim(), type: OBJ[d.type] ? d.type : 'custom', targetId: d.targetId.trim(), amount: /^\d+$/.test(String(d.amount).trim()) ? +d.amount : NaN, reward: /^\d+$/.test(String(d.reward).trim()) ? +d.reward : NaN, repeat: d.repeat, startsAt: d.startsAt, endsAt: d.endsAt, active: !!d.active }; }
+function opts(list, v) { return list.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === v ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join(''); }
+function previewText(d) {
+  var c = cand(d), rp = REPEAT.filter(function (r) { return r[0] === c.repeat; })[0][1];
+  return 'Aperçu : ' + (isNaN(c.amount) ? '…' : summary(c)) + ' → 💎 ' + (isNaN(c.reward) ? '…' : c.reward.toLocaleString('fr-FR')) + ' · ' + rp + ' · ' + period(c) + (c.active ? '' : ' · désactivée');
+}
+function renderEditor() {
+  var el = $('qs-editor'), ed = Q.editing; if (!el) return;
+  el.hidden = !ed; if (!ed) { el.innerHTML = ''; return; }
+  var d = ed.draft, locked = !ed.isNew && Q.pub.some(function (p) { return p.id === ed.orig; });
+  var f = function (l, inner, cls) { return '<label class="' + (cls || '') + '"><span>' + l + '</span>' + inner + '</label>'; };
+  var inp = function (k, v, a) { return '<input type="text" data-qs-k="' + k + '" value="' + E(v) + '" ' + (a || '') + '>'; };
+  el.innerHTML = '<div class="card-title">' + (ed.isNew ? 'Nouvelle quête' : 'Modifier la quête') + '</div><div class="qs-form">' +
+    f('Nom', inp('name', d.name, 'maxlength="60" placeholder="Chasseur de zombies"')) +
+    f('Identifiant (technique)', inp('id', d.id, 'maxlength="40" placeholder="chasseur_zombies"' + (locked ? ' readonly' : '')) + (locked ? '<small>Verrouillé : cette quête est déjà publiée.</small>' : '<small>Utilisé par le jeu. Généré depuis le nom.</small>')) +
+    f('Description affichée au joueur', '<textarea data-qs-k="description" rows="2" maxlength="300">' + E(d.description) + '</textarea>', 'wide') +
+    f('Type d’objectif', '<select data-qs-k="type">' + opts(Object.keys(OBJ).map(function (k) { return [k, OBJ[k][0]]; }), d.type) + '</select>') +
+    f('Cible (optionnel)', inp('targetId', d.targetId, 'maxlength="80" id="qs-target" placeholder="' + E(OBJ[d.type][2] || 'laisser vide = n’importe laquelle') + '"')) +
+    f('Quantité à atteindre', inp('amount', d.amount, 'inputmode="numeric"') + '<small id="qs-unit">' + E(OBJ[d.type][1]) + '</small>') +
+    f('Récompense (éclats)', inp('reward', d.reward, 'inputmode="numeric"')) +
+    f('Répétition', '<select data-qs-k="repeat">' + opts(REPEAT, d.repeat) + '</select>') +
+    f('Début (inclus)', '<input type="date" data-qs-k="startsAt" value="' + E(d.startsAt) + '">') +
+    f('Fin (incluse)', '<input type="date" data-qs-k="endsAt" value="' + E(d.endsAt) + '">') +
+    '<label class="qs-chk wide"><input type="checkbox" data-qs-k="active"' + (d.active ? ' checked' : '') + '> Quête active (visible par les joueurs après publication)</label>' +
+    '</div><p class="qs-sum" id="qs-prev">' + E(previewText(d)) + '</p><ul class="qs-errors" id="qs-errs" aria-live="polite">' + ed.errors.map(function (m) { return '<li>' + E(m) + '</li>'; }).join('') + '</ul>' +
+    '<div class="pm-bar"><button class="btn-action btn-unlock" data-qs-act="save">✔ Enregistrer dans le brouillon</button><button class="btn-action btn-link" data-qs-act="cancel">Annuler</button></div>';
+  if (ed.focus) { ed.focus = false; var n = el.querySelector('[data-qs-k="name"]'); if (n) n.focus(); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+}
+function openEditor(id) {
+  var x = id ? Q.list.filter(function (q) { return q.id === id; })[0] : null;
+  if (id && !x) return;
+  var d = x ? { id: x.id, name: x.name, description: x.description, type: x.type, targetId: x.targetId, amount: String(x.amount), reward: String(x.reward), repeat: x.repeat, startsAt: x.startsAt, endsAt: x.endsAt, active: x.active } : blank();
+  Q.editing = { isNew: !x, orig: x ? x.id : null, draft: d, errors: [], idTouched: !!x, focus: true }; renderEditor();
+}
+function saveEditor() {
+  var ed = Q.editing; if (!ed) return;
+  var c = cand(ed.draft), others = Q.list.filter(function (q) { return q.id !== ed.orig; }), errs = validateQuest(c, others);
+  if (errs.length) { ed.errors = errs; renderEditor(); return; }
+  c = normQuest(c);
+  if (ed.isNew) Q.list.push(c); else Q.list[Q.list.map(function (q) { return q.id; }).indexOf(ed.orig)] = c;
+  Q.editing = null; writeDraft(); render(); toast('Quête enregistrée dans le brouillon. Pense à publier.');
+}
+function onEditInput(e) {
+  var el = e.target, k = el.dataset.qsK, ed = Q.editing; if (!k || !ed) return;
+  var v = el.type === 'checkbox' ? el.checked : el.value; ed.draft[k] = v;
+  if (k === 'id') ed.idTouched = true;
+  if (k === 'name' && ed.isNew && !ed.idTouched) { ed.draft.id = slugify(v); var i = document.querySelector('[data-qs-k="id"]'); if (i) i.value = ed.draft.id; }
+  if (k === 'type') { var t = $('qs-target'), u = $('qs-unit'); if (t) t.placeholder = OBJ[v][2] || 'laisser vide = n’importe laquelle'; if (u) u.textContent = OBJ[v][1]; }
+  var p = $('qs-prev'); if (p) p.textContent = previewText(ed.draft);
+}
+
+/* ───────── Actions ───────── */
+function byId(id) { return Q.list.filter(function (q) { return q.id === id; })[0]; }
+function move(id, d) { var i = Q.list.indexOf(byId(id)), j = i + d; if (i < 0 || j < 0 || j >= Q.list.length) return; var t = Q.list[i]; Q.list[i] = Q.list[j]; Q.list[j] = t; writeDraft(); render(); }
+async function publish() {
+  if (Q.mode !== 'server' || !dirty()) return;
+  var bad = [];
+  Q.list.forEach(function (q) { var e = validateQuest(q, Q.list.filter(function (o) { return o !== q; })); if (e.length) bad.push(q.name + ' : ' + e[0]); });
+  if (bad.length) { toast('Publication bloquée — ' + bad[0], 'error'); return; }
+  var big = Q.list.filter(function (q) { return q.active && q.reward > REWARD_WARN; });
+  if (big.length && !(await window.confirm('Récompenses élevées', big.map(function (q) { return q.name + ' : ' + q.reward.toLocaleString('fr-FR') + ' éclats'; }).join(' · ') + '. Confirmer la publication ?', 'btn-confirm-warn'))) return;
+  var df = diff(Q.list, Q.pub);
+  if (!(await window.confirm('Publier les quêtes ?', df.added.length + ' nouvelle(s), ' + df.changed.length + ' modifiée(s), ' + df.removed.length + ' supprimée(s). Les joueurs verront les changements à leur prochaine synchronisation.', 'btn-confirm-warn'))) return;
+  var btn = $('qs-publish'); btn.disabled = true;
+  var d = await window.apiFetch(EP, 'PUT', { quests: Q.list, baseVersion: Q.version });
+  if (d && !d.error) { Q.pub = clone(Q.list); Q.version = d.version != null ? d.version : Q.version + 1; Q.meta = { at: new Date().toISOString() }; writeDraft(); render(); toast('Quêtes publiées (v' + Q.version + ').'); }
+  else if (d && d.status === 409) { toast('Les quêtes ont été modifiées ailleurs : recharge la page puis refais tes changements (ton brouillon est conservé).', 'error'); state(); }
+  else { toast('Publication impossible : ' + ((d && d.error) || 'erreur inconnue'), 'error'); state(); }
+}
+var ACT = {
+  'new': function () { if (Q.list.length >= MAX) { toast('Limite de ' + MAX + ' quêtes atteinte.', 'error'); return; } openEditor(null); },
+  edit: function (b) { openEditor(b.dataset.id); },
+  save: saveEditor, cancel: function () { Q.editing = null; renderEditor(); },
+  up: function (b) { move(b.dataset.id, -1); }, down: function (b) { move(b.dataset.id, 1); },
+  dup: function (b) { var x = byId(b.dataset.id); if (!x || Q.list.length >= MAX) return; var c = clone(x); c.id = uniqueId(x.id, Q.list.map(function (q) { return q.id; })); c.name = (x.name + ' (copie)').slice(0, 60); c.active = false; Q.list.splice(Q.list.indexOf(x) + 1, 0, c); writeDraft(); render(); },
+  del: function (b) { var x = byId(b.dataset.id); if (!x) return; Q.list.splice(Q.list.indexOf(x), 1); if (Q.editing && Q.editing.orig === x.id) Q.editing = null; writeDraft(); render(); toast('Retirée du brouillon (« Annuler les modifications » pour la récupérer).'); },
+  revert: async function () { if (!(await window.confirm('Annuler les modifications ?', 'Le brouillon revient à la dernière version publiée.', 'btn-confirm-warn'))) return; Q.list = clone(Q.pub); Q.editing = null; writeDraft(); render(); },
+  publish: publish,
+  reload: async function () { if (dirty() && !(await window.confirm('Recharger ?', 'Ton brouillon local sera conservé s’il correspond à la version publiée.', 'btn-confirm-warn'))) return; loaded = false; qsOpen(true); },
+  'export': function () { dl('relink-quetes-' + today() + '.json', 'application/json', JSON.stringify({ version: Q.version, exportedAt: new Date().toISOString(), quests: Q.list }, null, 2)); },
+  'import': function () { $('qs-imp').click(); }
+};
+async function onImport(e) {
+  var f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.size > 1024 * 1024) { toast('Fichier trop gros (1 Mo max).', 'error'); return; }
+  try {
+    var d = JSON.parse(await f.text()), arr = Array.isArray(d) ? d : d && d.quests;
+    if (!Array.isArray(arr)) throw new Error('format');
+    var taken = [], list = arr.slice(0, MAX).map(normQuest).map(function (q) { q.id = /^[a-z0-9][a-z0-9_-]{1,39}$/.test(q.id) && taken.indexOf(q.id) < 0 ? q.id : uniqueId(q.id || q.name, taken); taken.push(q.id); return q; });
+    var invalid = list.filter(function (q) { return validateQuest(q, []).length; }).length;
+    if (!(await window.confirm('Remplacer le brouillon ?', list.length + ' quête(s) dans le fichier' + (invalid ? ' (dont ' + invalid + ' à corriger avant publication)' : '') + '. Le brouillon actuel sera remplacé.', 'btn-confirm-warn'))) return;
+    Q.list = list; Q.editing = null; writeDraft(); render();
+  } catch (x) { toast('Fichier invalide : ce n’est pas un export de quêtes.', 'error'); }
+}
+
+/* ───────── Branchement ───────── */
+var root = $('page-quests');
+if (root) {
+  root.addEventListener('click', function (e) { var b = e.target.closest('[data-qs-act]'); if (b && ACT[b.dataset.qsAct]) ACT[b.dataset.qsAct](b); });
+  root.addEventListener('input', function (e) { if (e.target.id === 'qs-q') { Q.filter = e.target.value; var pos = e.target.selectionStart; render(); var n = $('qs-q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (x) {} } return; } onEditInput(e); });
+  root.addEventListener('change', function (e) {
+    if (e.target.dataset.qsToggle) { var x = byId(e.target.dataset.qsToggle); if (x) { x.active = e.target.checked; writeDraft(); render(); } return; }
+    onEditInput(e);
+  });
+  root.addEventListener('keydown', function (e) { if (e.key === 'Escape' && Q.editing) { Q.editing = null; renderEditor(); } if (e.key === 'Enter' && Q.editing && e.target.tagName === 'INPUT' && e.target.type === 'text') { e.preventDefault(); saveEditor(); } });
+  $('qs-imp').addEventListener('change', onImport);
+}
+window.qsOpen = qsOpen;
+var _lp = loadPage;
+loadPage = function (n) { if (n === 'quests') { qsOpen(); return; } _lp(n); };
+var _cp = cpBuildItems;
+cpBuildItems = function () {
+  var it = _cp();
+  it.push({ group: 'Pages', id: 'page:quests', ico: '📜', label: 'Quêtes', hint: 'Éditeur et publication des quêtes', kw: 'quêtes quetes missions objectifs récompense éclats config distance publier', run: function () { showPage('quests'); } });
   return it;
 };
 })();
