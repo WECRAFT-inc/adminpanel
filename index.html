@@ -1018,6 +1018,86 @@
 .u-gap-10{gap:10px!important}
 .u-m-0-0-6{margin:0 0 6px!important}
 .u-p-20{padding:20px!important}
+
+/* ═══ Gestion du projet (finances, écosystème, comptes) ═══ */
+#page-project .page-header { flex-wrap: wrap; }
+.pm-hdr-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pm-sync { font-size: var(--fs-xs); color: var(--muted); padding: 3px 10px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); }
+.pm-sync[data-s="server"] { color: var(--green); border-color: rgba(62,207,120,.3); }
+.pm-sync[data-s="pending"], .pm-sync[data-s="saving"] { color: var(--amber); border-color: rgba(245,166,35,.3); }
+.pm-sync[data-s="error"], .pm-sync[data-s="conflict"] { color: var(--red); border-color: rgba(232,80,80,.35); }
+.pm-note { padding: 10px 14px; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: var(--radius); background: var(--amber-bg); font-size: var(--fs-sm); line-height: 1.5; }
+.pm-note[hidden], .pm-undo[hidden] { display: none; }
+.pm-note code, .pm-hint kbd { font: 11px ui-monospace, Menlo, monospace; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+.pm-warnbox { border-left-color: var(--red); background: var(--red-bg); margin-bottom: 12px; }
+.pm-undo { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); font-size: var(--fs-sm); }
+.pm-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+.pm-hint { color: var(--muted); font-size: var(--fs-sm); line-height: 1.55; margin: 8px 0; }
+.pm-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.pm-stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 14px 16px; }
+.pm-stat .v { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.pm-stat .l { color: var(--muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+.pm-stat .s { color: var(--muted); font-size: var(--fs-2xs); margin-top: 2px; }
+.pm-stat.neg .v, .pm-mini .neg { color: var(--red); }
+.pm-stat.pos .v, .pm-mini .pos { color: var(--green); }
+.pm-tw { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--card); }
+.pm-grid, .pm-mini { width: 100%; border-collapse: collapse; font-size: var(--fs-md); }
+.pm-grid th, .pm-mini th { text-align: left; padding: 8px 10px; font-size: var(--fs-2xs); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pm-grid td, .pm-mini td { border-bottom: 1px solid var(--border); border-right: 1px solid rgba(255,255,255,.04); padding: 0; vertical-align: middle; }
+.pm-mini td, .pm-mini th { padding: 8px 12px; }
+.pm-grid tr:last-child td { border-bottom: 0; }
+.pm-grid .num, .pm-mini .num { text-align: right; font-variant-numeric: tabular-nums; }
+.pm-rn { width: 34px; text-align: center !important; color: var(--muted); font-size: var(--fs-xs); background: var(--surface); }
+.pm-act { width: 1%; white-space: nowrap; text-align: right; padding: 0 6px !important; }
+.pm-calc { padding: 0 12px !important; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+.pm-exp .pm-calc { color: var(--red); } .pm-inc .pm-calc { color: var(--green); }
+.pm-empty { padding: 22px !important; text-align: center; color: var(--muted); }
+#page-project .pm-grid td input:not([type="checkbox"]),
+#page-project .pm-grid td select { width: 100%; min-height: 38px; padding: 8px 10px; border: 2px solid transparent; border-radius: 0; background: transparent; box-shadow: none; font-size: var(--fs-md); }
+#page-project .pm-grid td input:not([type="checkbox"]):hover, #page-project .pm-grid td select:hover { background: var(--surface); }
+#page-project .pm-grid td input:not([type="checkbox"]):focus, #page-project .pm-grid td select:focus { border-color: var(--accent); background: var(--input-bg); box-shadow: none; }
+#page-project .pm-grid td input.pm-bad { border-color: var(--red); background: var(--red-bg); }
+.pm-ic { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 0; border-radius: var(--r-xs); background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; text-decoration: none; }
+.pm-ic:hover { background: var(--surface); color: var(--text); }
+.pm-ic[hidden] { display: none; }
+.pm-search { max-width: 260px; margin-left: auto; }
+/* Carte de l'écosystème */
+.pm-eco { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; align-items: start; }
+.pm-canvas { border: 1px solid var(--border); border-radius: var(--r-xl); background: radial-gradient(circle at 1px 1px, rgba(255,255,255,.07) 1px, transparent 0) 0 0 / 24px 24px, var(--surface); overflow: hidden; }
+#pm-svg { display: block; width: 100%; height: auto; touch-action: none; user-select: none; }
+.pm-node { cursor: grab; outline: none; touch-action: none; }
+.pm-node:active { cursor: grabbing; }
+.pm-node rect { fill: var(--card); stroke: var(--border-hi); stroke-width: 1.5; transition: stroke .15s, filter .15s; }
+.pm-node:hover rect, .pm-node:focus-visible rect { stroke: var(--text); }
+.pm-node.sel rect { stroke: var(--accent); stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(92,110,247,.55)); }
+.pm-nn { fill: var(--text); font-size: 14px; font-weight: 600; }
+.pm-ns { fill: var(--muted); font-size: 11px; }
+.pm-ni { font-size: 18px; }
+.pm-node.pm-n-panel rect { stroke: var(--accent); } .pm-node.pm-n-site rect { stroke: var(--green); }
+.pm-node.pm-n-worker rect { stroke: var(--amber); } .pm-node.pm-n-service rect { stroke: #60a5fa; }
+.pm-link .hit { stroke: transparent; stroke-width: 16; cursor: pointer; }
+.pm-link .vis { stroke: var(--muted); stroke-width: 2; pointer-events: none; }
+.pm-link.todo .vis { stroke-dasharray: 6 5; }
+.pm-link.sel .vis { stroke: var(--accent); stroke-width: 3; }
+.pm-link:hover .vis { stroke: var(--text); }
+.pm-ll { fill: var(--text); font-size: 11px; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; pointer-events: none; }
+.pm-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-left: auto; font-size: var(--fs-xs); color: var(--muted); }
+.pm-lg { display: inline-flex; align-items: center; gap: 5px; }
+.pm-lg i { width: 10px; height: 10px; border-radius: 3px; border: 2px solid var(--muted); display: inline-block; }
+.pm-lg.pm-n-panel i { border-color: var(--accent); } .pm-lg.pm-n-site i { border-color: var(--green); }
+.pm-lg.pm-n-worker i { border-color: var(--amber); } .pm-lg.pm-n-service i { border-color: #60a5fa; }
+.pm-lg i.dash { width: 18px; height: 0; border: 0; border-top: 2px dashed var(--muted); border-radius: 0; }
+.pm-insp { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.pm-insp h3 { font-size: 15px; margin: 0; } .pm-insp h4 { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 6px 0 0; }
+.pm-f { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-xs); color: var(--muted); }
+.pm-chk { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--text); }
+.pm-open { font-size: var(--fs-sm); color: var(--accent); text-decoration: none; }
+.pm-ll-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.pm-ll-list button { width: 100%; text-align: left; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--r-xs); background: var(--surface); color: var(--text); cursor: pointer; font-size: var(--fs-sm); }
+.pm-ll-list button:hover { border-color: var(--accent); }
+.pm-addlink { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px dashed var(--border-hi); border-radius: var(--r-lg); }
+.pm-danger { margin-top: 4px; }
+@media (max-width: 900px) { .pm-eco { grid-template-columns: 1fr; } .pm-search { margin-left: 0; max-width: none; flex: 1; } }
 </style>
 </head>
 <body>
@@ -1052,6 +1132,9 @@
       <button class="nav-search" onclick="openCommandPalette()">🔎 Rechercher… <span class="cp-kbd">Ctrl K</span></button>
       <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
         <span class="ico">📊</span> Tableau de bord
+      </button>
+      <button class="nav-item" data-page="project" onclick="showPage('project')">
+        <span class="ico">🗂️</span> Gestion du projet
       </button>
       <div class="nav-group" data-grp="community">
         <button class="nav-group-head" onclick="navToggleGroup('community')" aria-expanded="true"><span class="ico">👥</span> Communauté<span class="nav-spacer"></span><span class="nav-badge" hidden></span><span class="nav-chev">▾</span></button>
@@ -1222,6 +1305,28 @@
         <div class="who"><b>logout</b><small>user · 994523972135829504 → session 90f84d6c-209d-4a39-8cb1-951d0572d18b</small></div>
         <span class="when">il y a 6 j</span></div></div>
       </div></div>
+    </div>
+
+    <!-- ── Page Gestion du projet ── -->
+    <div id="page-project" class="page">
+      <div class="page-header">
+        <h2>Gestion du projet</h2>
+        <span id="pm-sync" class="pm-sync" role="status" aria-live="polite">⏳ Chargement…</span>
+        <div class="pm-hdr-actions">
+          <button class="btn-action btn-link" data-pm-act="reload" title="Recharger depuis le serveur" aria-label="Recharger">↻</button>
+          <button class="btn-action btn-link" data-pm-act="export-json">⬇ Sauvegarde (.json)</button>
+          <button class="btn-action btn-link" data-pm-act="import-json">⬆ Importer</button>
+          <input type="file" id="pm-imp" accept="application/json,.json" hidden>
+        </div>
+      </div>
+      <div id="pm-note" class="pm-note" hidden></div>
+      <div class="subtabs" id="pm-tabs" role="tablist">
+        <button class="subtab active" role="tab" data-pm-tab="finance">💶 Finances</button>
+        <button class="subtab" role="tab" data-pm-tab="eco">🕸️ Écosystème</button>
+        <button class="subtab" role="tab" data-pm-tab="accounts">🔐 Comptes &amp; accès</button>
+      </div>
+      <div id="pm-undo" class="pm-undo" hidden></div>
+      <div id="pm-body"></div>
     </div>
 
     <!-- ── Page Utilisateurs ── -->
@@ -5879,7 +5984,7 @@ SEC.home=function(){
 
 /* ---------- Info & News ---------- */
 SEC.news=function(){
-  var rows=DB.news.map(function(n){var s=CSTAT[n.status];return '<tr class="click" data-act="openNews" data-id="'+n.id+'"><td><b>'+esc(n.title)+'</b></td><td><span class="tag">'+esc(n.tags)+'</span></td><td class="num">'+esc(n.date)+'</td><td>'+st(s[0],s[1])+'</td><td class="num">'+(n.views?fmt(n.views):'—')+'</td><td><div class="acts"><button class="btn sm ghost" data-act="openNews" data-id="'+n.id+'">Modifier</button><button class="iconbtn" data-act="newsDelete" data-id="'+n.id+'" aria-label="Supprimer">'+IC.trash+'</button></div></td></tr>'}).join('');
+  var rows=DB.news.map(function(n){var s=CSTAT[n.status];return '<tr class="click" data-act="openNews" data-id="'+n.id+'"><td><b>'+esc(n.title)+'</b>'+(cardForNews(n.id)?' <span class="tag" title="Affiché dans les encarts de l’accueil">★ À la une</span>':'')+'</td><td><span class="tag">'+esc(n.tags)+'</span></td><td class="num">'+esc(n.date)+'</td><td>'+st(s[0],s[1])+'</td><td class="num">'+(n.views?fmt(n.views):'—')+'</td><td><div class="acts"><button class="btn sm ghost" data-act="openNews" data-id="'+n.id+'">Modifier</button><button class="iconbtn" data-act="newsDelete" data-id="'+n.id+'" aria-label="Supprimer">'+IC.trash+'</button></div></td></tr>'}).join('');
   return '<div class="spread"><p class="sub">Les articles s\'affichent dans la page Info &amp; News du launcher et dans le menu des notifications.</p><button class="btn pri" data-act="openNews">'+IC.plus+'Nouvel article</button></div>'+
   '<div class="tw"><table><thead><tr><th>Titre</th><th>Catégorie</th><th>Date</th><th>État</th><th>Vues</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 };
@@ -5901,12 +6006,15 @@ SEC.notifs=function(){
 };
 
 /* ---------- Skins du launcher ---------- */
-var HOW={free:'Inclus','event+shop':'Event ou shop','ach+shop':'Succès ou shop',ach:'Succès',premium:'Premium',event:'Event',shop:'Shop'};
+var HOW={free:'Inclus','event+shop':'Event ou shop','ach+shop':'Succès ou shop',ach:'Succès',premium:'Premium',event:'Event',shop:'Shop',code:'Code'};
+var HOWP={event:'Event',ach:'Succès',shop:'Shop',premium:'Premium',code:'Code',free:'Inclus'};
+function howLabel(h){if(HOW[h])return HOW[h];return String(h||'free').split('+').map(function(k,i){var t=HOWP[k]||k;return i?t.toLowerCase():t}).join(' ou ')}
+function codeBatches(k){var b={};DB.skinCodes.forEach(function(c){if(c.skinId===k.id&&!c.revoked&&!(c.expiresAt&&Date.parse(c.expiresAt)<Date.now()))b[c.batchId||'?']=1});return Object.keys(b).length}
 var LSST={published:['ok','Publié'],soon:['info','À venir'],off:['off','Désactivé']};
 SEC.lskins=function(){
   return '<div class="spread"><p class="sub">Les skins changent tout le launcher. Ceux marqués « À venir » apparaissent verrouillés dans le catalogue des joueurs.</p><div class="row"><button class="btn pri" data-act="openNewLskin">'+IC.plus+'Nouveau skin</button><button class="btn" data-act="openGrant">'+IC.gift+'Offrir un skin</button></div></div>'+
   '<div class="tw"><table><thead><tr><th>Skin</th><th>État</th><th>Déblocage</th><th>Prix</th><th>Versions</th><th>Thème du joueur</th><th>Fichier</th><th>Détenteurs</th><th></th></tr></thead><tbody>'+DB.lskins.map(function(k){var s=LSST[k.status];
-    return '<tr><td><b>'+esc(k.n)+'</b></td><td>'+st(s[0],s[1])+'</td><td>'+esc(HOW[k.how]||k.how)+'</td><td class="num">'+(k.price?fmt(k.price)+' éclats':'—')+'</td><td><div class="chips"><span class="tag">Standard</span>'+(k.lg?'<span class="tag">Liquid Glass</span>':'')+(k.mat?'<span class="tag">Mat</span>':'')+'</div></td><td>'+(k.themed?'Suit le thème':'Couleurs imposées')+'</td><td>'+(k.file&&k.file.id?st('ok','v'+esc(k.file.version)):st('off','Aucun'))+'</td><td class="num">'+fmt(k.owners)+'</td><td><div class="acts">'+(k.id!=='none'?'<button class="btn sm ghost" data-act="openLskin" data-id="'+k.id+'">Modifier</button>':'')+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+    return '<tr><td><b>'+esc(k.n)+'</b></td><td>'+st(s[0],s[1])+'</td><td>'+esc(howLabel(k.how))+(codeBatches(k)?' <small class="soft">· '+codeBatches(k)+' lot'+(codeBatches(k)>1?'s':'')+' de codes</small>':'')+'</td><td class="num">'+(k.price?fmt(k.price)+' éclats':'—')+'</td><td><div class="chips"><span class="tag">Standard</span>'+(k.lg?'<span class="tag">Liquid Glass</span>':'')+(k.mat?'<span class="tag">Mat</span>':'')+'</div></td><td>'+(k.themed?'Suit le thème':'Couleurs imposées')+'</td><td>'+(k.file&&k.file.id?st('ok','v'+esc(k.file.version)):st('off','Aucun'))+'</td><td class="num">'+fmt(k.owners)+'</td><td><div class="acts">'+(k.id!=='none'?'<button class="btn sm ghost" data-act="openLskin" data-id="'+k.id+'">Modifier</button>':'')+'</div></td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 /* ---------- Modpacks ---------- */
@@ -6050,21 +6158,21 @@ DR.card=function(d){var x=d.draft;
       (x.dest==='url'?F('Lien',I('url',x.url||'','class="mono" placeholder="https://"')):'')+
       '<div class="two">'+F('Début',I('from',x.from,'type="date"'))+F('Fin',I('to',x.to,'type="date"'),'Vide : pas de fin')+'</div>'+
       F('Public',SEL('aud',x.aud,[['all','Tous les joueurs'],['beta','Canal bêta'],['premium','Premium'],['staff','Staff']]))+
-      '<div class="field"><span>État</span>'+SEG('status',x.status,[['draft','Brouillon'],['scheduled','Programmé'],['published','Publié']])+'</div></div>',
+      '<div class="field"><span>État</span>'+SEG('status',x.status,[['draft','Brouillon'],['scheduled','Programmé'],['published','Publié']])+'</div>'+cardNewsField(x)+'</div>',
     foot:'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="cardSave">'+(d.id?'Enregistrer':'Créer l\'encart')+'</button>'};
 };
 DR.news=function(d){var x=d.draft;
-  return {title:d.id?'Modifier l\'article':'Nouvel article',
+  return {title:d.id?'Modifier l\'article':(x._card?'Article associé à l\'encart':'Nouvel article'),
     body:errBox(x)+'<div class="form">'+F('Titre',I('title',x.title,'maxlength="70"'))+'<div class="two">'+F('Catégorie',SEL('tags',x.tags,[['Event','Event'],['Launcher','Launcher'],['Shop','Shop'],['Partenaire','Partenaire'],['Communauté','Communauté']]))+F('Date de publication',I('date',x.date,'type="date"'))+'</div>'+
       F('Contenu (Markdown simple)',TA('body',x.body,'rows="9"'))+'<div class="preview-box md" id="newsPrev">'+md(x.body)+'</div>'+
-      '<div class="field"><span>État</span>'+SEG('status',x.status,[['draft','Brouillon'],['scheduled','Programmé'],['published','Publié']])+'</div>'+CHK('notify',x.notify,'Envoyer aussi une notification aux joueurs')+'</div>',
-    foot:(d.id?'<button class="btn danger" data-act="newsDelete" data-id="'+d.id+'" style="margin-right:auto">Supprimer</button>':'')+'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="newsSave">Enregistrer</button>'};
+      '<div class="field"><span>État</span>'+SEG('status',x.status,[['draft','Brouillon'],['scheduled','Programmé'],['published','Publié']])+'</div>'+CHK('featured',x.featured,'Mettre à la une : afficher cet article dans les encarts de l’accueil')+(x.featured?'<p class="soft">Un encart « Info &amp; News » est créé (ou mis à jour) et lié à l’article ; son état suit celui de l’article.</p>':(x._card?'<p class="soft">Sans « à la une », l’encart en cours de création ne sera pas créé.</p>':''))+CHK('notify',x.notify,'Envoyer aussi une notification aux joueurs')+'</div>',
+    foot:(d.id?'<button class="btn danger" data-act="newsDelete" data-id="'+d.id+'" style="margin-right:auto">Supprimer</button>':'')+''+(x._card?'<button class="btn ghost" data-act="newsBack">← Retour à l’encart</button>':'<button class="btn ghost" data-act="closeDrawer">Annuler</button>')+'<button class="btn pri" data-act="newsSave">Enregistrer</button>'};
 };
 DR.lskin=function(d){var x=d.draft;
   return {title:d.id?'Skin · '+x.n:'Nouveau skin launcher',
     body:'<div class="form">'+(d.id?'':F('Nom',I('n',x.n,'maxlength="60"')))+'<div class="field"><span>État dans le catalogue</span>'+SEG('status',x.status,[['published','Publié'],['soon','À venir'],['off','Désactivé']])+'</div>'+
-      '<div class="field"><span>Façons de le débloquer</span><div class="row">'+CHK('uEvent',x.uEvent,'Event')+CHK('uShop',x.uShop,'Shop')+CHK('uAch',x.uAch,'Succès')+CHK('uPrem',x.uPrem,'Premium')+'</div></div>'+
-      (x.uShop?F('Prix (éclats)',N('price',x.price,'min="0" step="50"'),'Le joueur l’achète dans le launcher avec ses éclats.'):'')+(x.uEvent?F('Event qui le débloque',I('evName',x.evName||'','placeholder="Raz-de-marée"')):'')+(x.uAch?F('Succès à obtenir',I('achText',x.achText||'','placeholder="50 lancements"')):'')+
+      '<div class="field"><span>Façons de le débloquer</span><div class="row">'+CHK('uEvent',x.uEvent,'Event')+CHK('uShop',x.uShop,'Shop')+CHK('uAch',x.uAch,'Succès')+CHK('uPrem',x.uPrem,'Premium')+CHK('uCode',x.uCode,'Code')+'</div></div>'+
+      (x.uCode?'<p class="soft">'+(d.id?'Génère tes lots de codes dans la section « Codes de déblocage » plus bas : le joueur saisit le code dans le launcher.':'Enregistre le skin, puis rouvre-le pour générer des codes.')+'</p>':'')+(x.uShop?F('Prix (éclats)',N('price',x.price,'min="0" step="50"'),'Le joueur l’achète dans le launcher avec ses éclats.'):'')+(x.uEvent?F('Event qui le débloque',I('evName',x.evName||'','placeholder="Raz-de-marée"')):'')+(x.uAch?F('Succès à obtenir',I('achText',x.achText||'','placeholder="50 lancements"')):'')+
       '<div class="field"><span>Versions proposées</span><div class="row"><label class="check"><input type="checkbox" checked disabled> Standard</label>'+CHK('lg',x.lg,'Liquid Glass')+CHK('mat',x.mat,'Mat')+'</div></div>'+
       '<div class="field"><span>Couleurs</span>'+SEG('themed',x.themed?'1':'0',[['1','Suit le thème du joueur'],['0','Couleurs imposées']])+'</div></div>'+
       (d.id?'<section class="panel u-bg-panel-2"><header><div><h2>Fichier du skin</h2><p>Archive .rlskin (40 Mo max) et sa signature Ed25519. Le launcher la télécharge sans mise à jour.</p></div></header>'+errBox({err:x.fileErr})+
@@ -6322,14 +6430,56 @@ ACT.cardArchive=async function(b){var c=byId(DB.cards,b.dataset.id);if(!(await c
   run(b,'cardArchive',{id:c.id},null,{ok:'Encart archivé',target:c.title,after:function(){DB.cards.splice(DB.cards.indexOf(c),1)}})};
 
 /* -- Info & News -- */
-ACT.openNews=function(b){var id=b.dataset.id,n=id?clone(byId(DB.news,id)):{title:'',tags:'Event',date:'',status:'draft',body:'',views:0};n.notify=false;n.err='';if(n.date&&!/^\d{4}/.test(n.date))n.date='';openDrawer({kind:'news',id:id||null,draft:n})};
+ACT.openNews=function(b){var id=b.dataset.id,n=id?clone(byId(DB.news,id)):{title:'',tags:'Event',date:'',status:'draft',body:'',views:0};n.notify=false;n.err='';n.featured=!!(id&&cardForNews(id));if(n.date&&!/^\d{4}/.test(n.date))n.date='';openDrawer({kind:'news',id:id||null,draft:n})};
 ACT.newsSave=function(b){var d=S.drawer,x=d.draft;x.err='';if(!x.title.trim())x.err='donne un titre à l\'article.';else if(!x.body.trim())x.err='l\'article est vide.';if(x.err){renderDrawer();return}
-  var nw=!d.id;run(b,nw?'newsCreate':'newsSave',{id:d.id},x,{ok:(x.status==='published'?'Article publié':'Article enregistré')+(x.notify?' et notification envoyée':''),target:x.title,close:true,after:function(res){
+  var nw=!d.id;run(b,nw?'newsCreate':'newsSave',{id:d.id},newsPayload(x),{ok:(x.status==='published'?'Article publié':'Article enregistré')+(x.notify?' et notification envoyée':''),target:x.title,close:true,after:function(res){
     var n={id:d.id||res.id||uid('n'),title:x.title,tags:x.tags,date:x.date?x.date.split('-').reverse().slice(0,2).join('/'):(x.status==='published'?'aujourd\'hui':'—'),status:x.status,views:x.views||0,body:x.body};
-    if(nw)DB.news.unshift(n);else DB.news[DB.news.indexOf(byId(DB.news,d.id))]=n;
+    if(nw)DB.news.unshift(n);else DB.news[DB.news.indexOf(byId(DB.news,d.id))]=n;n.featured=!!x.featured;syncNewsCard(n,x);
     if(x.notify)DB.notifs.unshift({t:nowStr(),title:x.title,aud:'Tous les joueurs',sent:0,open:0,status:res.notification_status||'queued'})}})};
 ACT.newsDelete=async function(b){var n=byId(DB.news,b.dataset.id);if(!(await confirmBox({title:'Supprimer « '+n.title+' » ?',text:'L\'article disparaît de la page Info &amp; News.',ok:'Supprimer',danger:true})))return;
-  run(b,'newsDelete',{id:n.id},null,{ok:'Article supprimé',target:n.title,close:!!S.drawer,after:function(){DB.news.splice(DB.news.indexOf(n),1)}})};
+  run(b,'newsDelete',{id:n.id},null,{ok:'Article supprimé',target:n.title,close:!!S.drawer,after:function(){DB.news.splice(DB.news.indexOf(n),1);syncNewsCard(n,{featured:false})}})};
+
+/* -- Mettre à la une : un article ↔ un encart d'accueil -- */
+var NEWS_COLORS={Event:['#7c2d12','#f59e0b'],Launcher:['#14532d','#22c55e'],Shop:['#713f12','#eab308'],Partenaire:['#134e4a','#14b8a6'],'Communauté':['#4c1d95','#8b5cf6']};
+var NEWS_CTYPE={Event:'event',Launcher:'maj',Shop:'shop',Partenaire:'discover','Communauté':'content'};
+var CARD_NTAG={event:'Event',maj:'Launcher',shop:'Shop',discover:'Partenaire'};
+function cutTxt(s,n){s=String(s||'').trim();return s.length>n?s.slice(0,n-1).trimEnd()+'…':s}
+function firstLine(md){var l=String(md||'').split('\n').map(function(t){return t.replace(/[#>*_`~\[\]!]|\(https?:[^)]*\)/g,'').trim()}).filter(Boolean);return l[0]||''}
+function newsPayload(x){var p=Object.assign({},x);delete p._card;delete p.err;return p}
+function cardForNews(id){return DB.cards.filter(function(c){return c.newsId===id})[0]}
+function cardNewsField(x){var a=x.newsId?byId(DB.news,x.newsId):null;
+  return '<div class="field"><span>Article associé</span>'+(a?
+    '<div class="row"><span class="tag">'+esc(a.title)+'</span><button class="btn sm" data-act="openNews" data-id="'+esc(a.id)+'">Ouvrir l’article</button></div><small>Enregistre l’encart avant d’ouvrir l’article : les modifications non enregistrées seraient perdues.</small>'
+    :'<div class="row"><button class="btn sm" data-act="cardMakeNews">'+IC.plus+'Créer un article associé</button></div><small>Ouvre l’éditeur d’article avec le titre et le texte de l’encart ; le bouton de l’encart mènera vers cet article.</small>')+'</div>'}
+async function syncNewsCard(n,x){
+  var card=cardForNews(n.id);
+  try{
+    if(x.featured){
+      var base=x._card?clone(x._card):card?clone(card):null,isNew=!(base&&base.id&&byId(DB.cards,base.id));
+      var col=NEWS_COLORS[x.tags]||NEWS_COLORS.Event;
+      var c=Object.assign({type:NEWS_CTYPE[x.tags]||'content',tags:cutTxt(x.tags,20),title:'',sub:'',c1:col[0],c2:col[1],cta:'Lire',aud:'all',img:'',url:'',from:'',to:''},base||{});
+      delete c.err;
+      c.title=cutTxt(c.title||x.title,48);c.sub=cutTxt(c.sub||firstLine(x.body),60);
+      c.dest='news';c.newsId=n.id;c.cta=c.cta||'Lire';c.status=x.status;
+      if(x.status==='scheduled')c.from=x.date||c.from;
+      var res=await api(isNew?'cardCreate':'cardSave',{id:c.id},c);
+      if(isNew){c.id=(res&&res.id)||c.id||uid('c');DB.cards.push(c)}else DB.cards[DB.cards.indexOf(byId(DB.cards,c.id))]=c;
+      logAudit(isNew?'Encart créé (article à la une)':'Encart mis à jour (article à la une)',n.title,'ok');
+      toast(isNew?'Encart créé':'Encart mis à jour','Article à la une : '+n.title);
+    }else if(card){
+      await api('cardArchive',{id:card.id});
+      DB.cards.splice(DB.cards.indexOf(card),1);
+      logAudit('Encart retiré (article plus à la une)',n.title,'ok');
+      toast('Encart retiré de l’accueil',n.title);
+    }
+  }catch(e){logAudit('Encart « à la une »',n.title,'err');toast('Article enregistré, mais l’encart a échoué : '+e.message,'Réessaie depuis Accueil & encarts','err')}
+  render();
+}
+ACT.cardMakeNews=function(){var d=S.drawer,x=d.draft;
+  if(!String(x.title||'').trim()){x.err='donne d’abord un titre à l’encart : il servira de titre à l’article.';renderDrawer();return}
+  var card=clone(x);card.err='';
+  openDrawer({kind:'news',id:null,draft:{title:String(x.title).trim(),tags:CARD_NTAG[x.type]||'Communauté',date:x.from||'',status:x.status||'draft',body:x.sub?String(x.sub)+'\n\n':'',views:0,notify:false,err:'',featured:true,_card:card}})};
+ACT.newsBack=function(){var x=S.drawer.draft;openDrawer({kind:'card',id:x._card.id||null,draft:x._card})};
 
 /* -- Notifications -- */
 var AUDN={all:'Tous les joueurs',beta:'Canal bêta',relaunch:'Joueurs ReLaunch',role:'Rôle',players:'Joueurs précis'};
@@ -6343,11 +6493,11 @@ ACT.nfSend=async function(b){var f=S.f.notif;
     DB.notifs.unshift({t:f.when==='later'?f.at.replace('T',' '):nowStr(),title:f.title,aud:label,sent:0,open:0,status:res.status||'queued'});S.f.notif=null}})};
 
 /* -- Skins du launcher -- */
-ACT.openLskin=function(b){var k=clone(byId(DB.lskins,b.dataset.id));k.uEvent=/event/.test(k.how);k.uShop=/shop/.test(k.how);k.uAch=/ach/.test(k.how);k.uPrem=k.how==='premium';openDrawer({kind:'lskin',id:k.id,draft:k})};
-ACT.openNewLskin=function(){openDrawer({kind:'lskin',id:null,draft:{n:'',status:'soon',price:0,lg:false,mat:false,themed:false,uEvent:false,uShop:false,uAch:false,uPrem:false}})};
+ACT.openLskin=function(b){var k=clone(byId(DB.lskins,b.dataset.id));k.uEvent=/event/.test(k.how);k.uShop=/shop/.test(k.how);k.uAch=/ach/.test(k.how);k.uPrem=k.how==='premium';k.uCode=/code/.test(k.how);openDrawer({kind:'lskin',id:k.id,draft:k})};
+ACT.openNewLskin=function(){openDrawer({kind:'lskin',id:null,draft:{n:'',status:'soon',price:0,lg:false,mat:false,themed:false,uEvent:false,uShop:false,uAch:false,uPrem:false,uCode:false}})};
 ACT.lskinSave=function(b){var d=S.drawer,x=d.draft,k=byId(DB.lskins,d.id);
-  var how=[x.uEvent&&'event',x.uAch&&'ach',x.uShop&&'shop'].filter(Boolean).join('+')||(x.uPrem?'premium':'free');if(x.uPrem&&how!=='premium')how+='+premium';
-  var nw=!d.id,payload={status:x.status,unlock:{event:x.uEvent?x.evName||true:false,shop:x.uShop?+x.price:false,achievement:x.uAch?x.achText||true:false,premium:x.uPrem},versions:{liquidGlass:x.lg,mat:x.mat},followsTheme:x.themed==='1'||x.themed===true};
+  var how=[x.uEvent&&'event',x.uAch&&'ach',x.uShop&&'shop',x.uCode&&'code'].filter(Boolean).join('+')||(x.uPrem?'premium':'free');if(x.uPrem&&how!=='premium')how+='+premium';
+  var nw=!d.id,payload={status:x.status,unlock:{event:x.uEvent?x.evName||true:false,shop:x.uShop?+x.price:false,achievement:x.uAch?x.achText||true:false,premium:x.uPrem,code:!!x.uCode},versions:{liquidGlass:x.lg,mat:x.mat},followsTheme:x.themed==='1'||x.themed===true};
   if(nw)payload.n=x.n;
   if(nw&&!x.n.trim()){x.err='indique le nom du skin.';renderDrawer();return}
   run(b,nw?'lskinCreate':'lskinSave',{id:d.id},payload,{ok:'Skin « '+(x.n||k.n)+' » enregistré',target:x.n||k.n,close:true,after:function(res){
@@ -6523,7 +6673,7 @@ function applyLauncherState(state){
   var carousel=settings['home:carousel']||{count:3,autoplay:true,speedSeconds:7};DB.carousel={count:carousel.count||3,autoplay:carousel.autoplay!==false,speed:carousel.speedSeconds||7};
   DB.cards=list('home_cards').filter(function(item){return !item.archived}).map(function(item){return Object.assign({type:'event',tags:'',title:'',sub:'',c1:'#7c2d12',c2:'#f59e0b',dest:'relaunch',cta:'Voir',status:'draft',from:'',to:'',aud:'all',img:''},item)});
   DB.news=list('news').map(function(item){return Object.assign({tags:'',date:'',views:0,body:''},item)});
-  DB.lskins=list('skins').map(function(item){var u=item.unlock||{},v=item.versions||{};return Object.assign({},item,{n:item.n||item.name||item.id,how:[u.event&&'event',u.achievement&&'ach',u.shop&&'shop'].filter(Boolean).join('+')||(u.premium?'premium':'free'),price:typeof u.shop==='number'?u.shop:0,lg:v.liquidGlass===true,mat:v.mat===true,themed:item.followsTheme===true,owners:item.owners||0})});
+  DB.lskins=list('skins').map(function(item){var u=item.unlock||{},v=item.versions||{};return Object.assign({},item,{n:item.n||item.name||item.id,how:[u.event&&'event',u.achievement&&'ach',u.shop&&'shop',u.code&&'code'].filter(Boolean).join('+')||(u.premium?'premium':'free'),price:typeof u.shop==='number'?u.shop:0,lg:v.liquidGlass===true,mat:v.mat===true,themed:item.followsTheme===true,owners:item.owners||0})});
   DB.modpacks=list('modpacks').map(function(item){return Object.assign({n:item.n||item.name||item.id,mc:item.mc||'—',ver:item.version||item.ver||'—',mods:item.mods||0,sig:item.sig===true,visible:item.visible===true,installs:item.installs||0,c1:'#334155',c2:'#94a3b8'},item,{size:item.sizeBytes?formatStorageBytes(item.sizeBytes):typeof item.size==='number'?sizeOf(item.size):item.size||'—'})});
   DB.servers=list('servers').map(function(item){return Object.assign({n:item.n||item.name||item.id,host:item.host||'',state:'offline',players:0,max:0,pack:'',event:''},item)});
   DB.events=list('events').map(function(item){return Object.assign({n:item.n||item.name||item.id,date:'',server:'',pack:'',slots:0,state:'draft',desc:'',apps:[]},item)});
@@ -6937,4 +7087,490 @@ async function loadIdentities() {
   };
 })();
 </script>
+<script>
+// ── Gestion du projet : finances (tableur), écosystème (carte), comptes & accès ──
+// Stockage : GET/PUT /admin/project sur le Worker si la route existe, sinon localStorage (ce navigateur).
+(function () {
+'use strict';
+var KEY = 'relink_project_v1', EP = '/admin/project';
+var W = 900, H = 520, NW = 172, NH = 56;
+var TYPES = {
+  panel:   { ico: '🖥️', label: 'Panel / outil' },
+  site:    { ico: '🌐', label: 'Site' },
+  worker:  { ico: '⚙️', label: 'Worker' },
+  service: { ico: '☁️', label: 'Service externe' },
+  other:   { ico: '◻️', label: 'Autre' }
+};
+var LOGINS = [['google', 'Google'], ['password', 'Mot de passe'], ['discord', 'Discord'], ['github', 'GitHub'], ['microsoft', 'Microsoft'], ['apikey', 'Clé / token'], ['other', 'Autre']];
+var PERIODS = [['year', '/ an'], ['month', '/ mois'], ['once', 'ponctuel']];
+
+/*PURE_START*/
+function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function str(v, n) { return String(v == null ? '' : v).slice(0, n || 200); }
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function sid(v, p) { return String(v == null ? '' : v).slice(0, 24).replace(/[^\w-]/g, '') || uid(p); }
+function uid(p) { return p + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-3); }
+function cut(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function parseNum(s) { var n = parseFloat(String(s).replace(/\s/g, '').replace(',', '.')); return isFinite(n) ? Math.max(0, Math.round(n * 100) / 100) : 0; }
+function safeUrl(u) { u = String(u || '').trim(); if (!/^https?:\/\/\S+$/i.test(u)) return ''; try { new URL(u); return u; } catch (e) { return ''; } }
+function yearOf(r) { return r.period === 'month' ? r.amount * 12 : r.amount; }
+function monthOf(r) { return r.period === 'once' ? null : yearOf(r) / 12; }
+function totals(rows) {
+  var t = { exp: 0, inc: 0, expM: 0, incM: 0, people: {} };
+  rows.forEach(function (r) {
+    var y = yearOf(r), m = monthOf(r), k = r.kind;
+    t[k] += y; if (m != null) t[k + 'M'] += m;
+    var w = String(r.who || '').trim() || 'Non attribué';
+    var p = t.people[w] || (t.people[w] = { exp: 0, inc: 0 }); p[k] += y;
+  });
+  return t;
+}
+var PWD_RE = /(mot\s*de\s*passe|password|passwd|mdp|pwd)\s*[:=]/i;
+function csvCell(v) {
+  v = String(v == null ? '' : v);
+  if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;            // neutralise les formules Excel
+  return '"' + v.replace(/"/g, '""') + '"';
+}
+function toCsv(rows) {
+  var head = ['Libellé', 'Type', 'Montant', 'Période', 'Payé / reçu par', 'Catégorie', 'Note', 'Par an', 'Par mois'];
+  var out = [head.map(csvCell).join(';')];
+  rows.forEach(function (r) {
+    var m = monthOf(r);
+    out.push([r.label, r.kind === 'inc' ? 'Gain' : 'Dépense', String(r.amount).replace('.', ','), (PERIODS.filter(function (p) { return p[0] === r.period; })[0] || ['', ''])[1], r.who, r.cat, r.note,
+      String(Math.round(yearOf(r) * 100) / 100).replace('.', ','), m == null ? '' : String(Math.round(m * 100) / 100).replace('.', ',')].map(csvCell).join(';'));
+  });
+  return '\ufeff' + out.join('\r\n');
+}
+function seed() {
+  return {
+    v: 1,
+    finance: [
+      { id: 'f1', label: 'À préciser', kind: 'exp', amount: 6.5, period: 'year', who: 'elit', cat: '', note: '' },
+      { id: 'f2', label: 'À préciser', kind: 'exp', amount: 200, period: 'year', who: 'rexi', cat: '', note: '' }
+    ],
+    eco: {
+      nodes: [
+        { id: 'panel', name: 'Panel admin', type: 'panel', url: '', note: 'Ce panneau (index.html).', x: 140, y: 90 },
+        { id: 'auth', name: 'relink-auth', type: 'worker', url: 'https://relink-auth.refugeemeraudien-direction.workers.dev', note: 'Worker : authentification et API admin.', x: 450, y: 260 },
+        { id: 'senso', name: 'Emerarudo Senso', type: 'site', url: '', note: 'mcrepage', x: 760, y: 90 },
+        { id: 'express', name: 'Emeraldian Express', type: 'site', url: '', note: '', x: 760, y: 430 },
+        { id: 'tlv', name: 'TLV-Content', type: 'worker', url: '', note: 'Worker lié à Emeraldian Express.', x: 450, y: 450 }
+      ],
+      links: [
+        { id: 'l1', from: 'panel', to: 'auth', label: 'API admin', dir: 'to', todo: false },
+        { id: 'l2', from: 'senso', to: 'auth', label: 'connexion ?', dir: 'to', todo: true },
+        { id: 'l3', from: 'express', to: 'auth', label: 'connexion ?', dir: 'to', todo: true },
+        { id: 'l4', from: 'tlv', to: 'express', label: 'contenu ?', dir: 'to', todo: true }
+      ]
+    },
+    accounts: [
+      { id: 'a1', service: 'Scaleway (domaines)', url: 'https://console.scaleway.com/domains/operations', login: 'google', account: 'wedevreach@gmail.com', owner: '', usage: 'Noms de domaine', note: '' }
+    ]
+  };
+}
+function normalize(d) {
+  d = d && typeof d === 'object' ? d : {};
+  var out = { v: 1, finance: [], eco: { nodes: [], links: [] }, accounts: [] };
+  (Array.isArray(d.finance) ? d.finance : []).slice(0, 500).forEach(function (r) {
+    r = r || {};
+    out.finance.push({ id: sid(r.id, 'f'), label: str(r.label, 120), kind: r.kind === 'inc' ? 'inc' : 'exp', amount: parseNum(r.amount),
+      period: ['year', 'month', 'once'].indexOf(r.period) >= 0 ? r.period : 'year', who: str(r.who, 40), cat: str(r.cat, 40), note: str(r.note, 300) });
+  });
+  var e = d.eco && typeof d.eco === 'object' ? d.eco : {}, ids = {};
+  (Array.isArray(e.nodes) ? e.nodes : []).slice(0, 60).forEach(function (n) {
+    n = n || {}; var id = sid(n.id, 'n'); if (ids[id]) return; ids[id] = 1;
+    out.eco.nodes.push({ id: id, name: str(n.name, 60), type: TYPES[n.type] ? n.type : 'other', url: str(n.url, 300), note: str(n.note, 400),
+      x: clamp(+n.x || W / 2, NW / 2, W - NW / 2), y: clamp(+n.y || H / 2, NH / 2, H - NH / 2) });
+  });
+  (Array.isArray(e.links) ? e.links : []).slice(0, 200).forEach(function (l) {
+    l = l || {}; var lf = sid(l.from, 'x'), lt = sid(l.to, 'x'); if (!ids[lf] || !ids[lt] || lf === lt) return;
+    out.eco.links.push({ id: sid(l.id, 'l'), from: lf, to: lt, label: str(l.label, 40), dir: l.dir === 'both' ? 'both' : 'to', todo: !!l.todo });
+  });
+  (Array.isArray(d.accounts) ? d.accounts : []).slice(0, 300).forEach(function (a) {
+    a = a || {};
+    out.accounts.push({ id: sid(a.id, 'a'), service: str(a.service, 80), url: str(a.url, 300), login: LOGINS.some(function (x) { return x[0] === a.login; }) ? a.login : 'other',
+      account: str(a.account, 120), owner: str(a.owner, 40), usage: str(a.usage, 120), note: str(a.note, 300) });
+  });
+  return out;
+}
+// Point où le segment centre→centre sort du rectangle du nœud
+function edgePoint(c, d) {
+  var dx = d.x - c.x, dy = d.y - c.y; if (!dx && !dy) return { x: c.x, y: c.y };
+  var t = Math.min(dx ? (NW / 2) / Math.abs(dx) : Infinity, dy ? (NH / 2) / Math.abs(dy) : Infinity);
+  return { x: c.x + dx * t, y: c.y + dy * t };
+}
+/*PURE_END*/
+
+var PM = null, mode = 'loading', version = 0, loaded = false, dirty = false, saveT = null, undoT = null, undoSnap = null;
+var tab = 'finance', sel = null, warned = false, drag = null;
+function $(id) { return document.getElementById(id); }
+function toast(m, t) { if (window.toast) window.toast(m, t || 'success'); }
+function eur(v) { return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(v || 0); }
+function nodeById(id) { return PM.eco.nodes.filter(function (n) { return n.id === id; })[0]; }
+function linkById(id) { return PM.eco.links.filter(function (l) { return l.id === id; })[0]; }
+function rowsOf(sec) { return PM[sec]; }
+function rowById(sec, id) { return rowsOf(sec).filter(function (r) { return r.id === id; })[0]; }
+
+/* ───────── Stockage ───────── */
+function readLocal() { try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+function writeLocal() { try { localStorage.setItem(KEY, JSON.stringify(PM)); } catch (e) {} }
+var SYNC = { loading: '⏳ Chargement…', pending: '✏️ Modifications en attente…', saving: '⏳ Enregistrement…', server: '☁️ Synchronisé avec le Worker',
+  local: '💾 Enregistré dans ce navigateur uniquement', error: '⚠️ Échec de la synchronisation', conflict: '⚠️ Conflit : recharge la page' };
+function setSync(s) { var el = $('pm-sync'); if (el) { el.textContent = SYNC[s]; el.dataset.s = s; } }
+function showNote() {
+  var n = $('pm-note'); if (!n) return;
+  n.hidden = mode !== 'local';
+  if (mode === 'local') n.innerHTML = '<b>Stockage local.</b> Ces données restent dans <b>ce navigateur</b> et ne sont pas partagées avec l’équipe. Pour les synchroniser, ajoute les routes <code>GET /admin/project</code> et <code>PUT /admin/project</code> au Worker (réponse <code>{ok, data, version}</code>). Pense à utiliser « Sauvegarde (.json) ».';
+}
+async function pmOpen(force) {
+  if (loaded && !force) { render(); return; }
+  setSync('loading');
+  var local = normalizeOrNull(readLocal()), d = null;
+  try { d = await window.apiFetch(EP); } catch (e) { d = { error: 'réseau' }; }
+  if (d && !d.error && d.data && typeof d.data === 'object') { PM = normalize(d.data); version = d.version || 0; mode = 'server'; }
+  else if (d && !d.error) { PM = local || seed(); version = d.version || 0; mode = 'server'; dirty = true; }   // route présente mais vide : on y envoie les données locales
+  else { PM = local || seed(); mode = 'local'; }
+  loaded = true; showNote(); render();
+  if (dirty) { dirty = false; touch(); } else setSync(mode === 'server' ? 'server' : 'local');
+}
+function normalizeOrNull(v) { return v && typeof v === 'object' ? normalize(v) : null; }
+function touch() { writeLocal(); dirty = true; setSync(mode === 'server' ? 'pending' : 'local'); clearTimeout(saveT); saveT = setTimeout(flush, 700); }
+async function flush() {
+  clearTimeout(saveT);
+  if (mode !== 'server') { dirty = false; setSync('local'); return; }
+  setSync('saving');
+  var d = await window.apiFetch(EP, 'PUT', { data: PM, baseVersion: version });
+  if (d && !d.error) { version = d.version != null ? d.version : version + 1; dirty = false; setSync('server'); }
+  else if (d && d.status === 409) { setSync('conflict'); toast('Le projet a été modifié ailleurs : recharge pour récupérer la dernière version.', 'error'); }
+  else { setSync('error'); toast('Sauvegarde impossible : ' + ((d && d.error) || 'erreur inconnue'), 'error'); }
+}
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && dirty && loaded) flush(); });
+window.addEventListener('beforeunload', function (e) { if (dirty && mode === 'server') { e.preventDefault(); e.returnValue = ''; } });
+
+/* ───────── Annuler une suppression ───────── */
+function snapshot(msg) {
+  undoSnap = JSON.stringify(PM);
+  var u = $('pm-undo'); u.hidden = false;
+  u.innerHTML = E(msg) + ' <button class="btn-action btn-link" data-pm-act="undo">↩ Annuler</button>';
+  clearTimeout(undoT); undoT = setTimeout(function () { u.hidden = true; undoSnap = null; }, 10000);
+}
+function undo() { if (!undoSnap) return; PM = normalize(JSON.parse(undoSnap)); undoSnap = null; $('pm-undo').hidden = true; sel = null; touch(); render(); }
+
+/* ───────── Rendu général ───────── */
+function render() {
+  if (!PM) return;
+  var b = $('pm-body'); if (!b) return;
+  document.querySelectorAll('#pm-tabs [data-pm-tab]').forEach(function (t) { var on = t.dataset.pmTab === tab; t.classList.toggle('active', on); t.setAttribute('aria-selected', String(on)); });
+  b.innerHTML = tab === 'finance' ? finHtml() : tab === 'eco' ? ecoHtml() : accHtml();
+  if (tab === 'finance') finRecalc();
+  if (tab === 'eco') ecoDraw();
+}
+
+/* ───────── Grille générique (façon tableur) ───────── */
+function listOf(sec, k) { var s = {}; rowsOf(sec).forEach(function (r) { if (r[k]) s[r[k]] = 1; }); return Object.keys(s).sort(); }
+function cell(sec, col, row) {
+  var a = ' data-pm="' + sec + '" data-id="' + E(row.id) + '" data-k="' + col.k + '" aria-label="' + E(col.h) + '"', v = row[col.k];
+  if (col.t === 'sel') return '<select' + a + '>' + col.opts.map(function (o) { return '<option value="' + E(o[0]) + '"' + (v === o[0] ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join('') + '</select>';
+  if (col.t === 'num') return '<input type="text" inputmode="decimal" data-t="num"' + a + ' value="' + E(String(v).replace('.', ',')) + '">';
+  return '<input type="text"' + a + (col.list ? ' list="' + col.list + '"' : '') + ' value="' + E(v) + '"' + (col.ph ? ' placeholder="' + E(col.ph) + '"' : '') + ' maxlength="' + (col.max || 200) + '">';
+}
+function gridHtml(sec, cols, rows, actions, rowCls) {
+  var th = cols.map(function (c) { return '<th' + (c.w ? ' style="min-width:' + c.w + 'px"' : '') + (c.cls ? ' class="' + c.cls + '"' : '') + '>' + E(c.h) + '</th>'; }).join('');
+  var body = rows.map(function (r, i) {
+    return '<tr data-id="' + E(r.id) + '" class="pm-row ' + (rowCls ? rowCls(r) : '') + '"><td class="pm-rn">' + (i + 1) + '</td>' +
+      cols.map(function (c) { return c.t === 'calc' ? '<td class="pm-calc ' + (c.cls || '') + '" data-calc="' + E(r.id) + ':' + c.k + '"></td>' : '<td>' + cell(sec, c, r) + '</td>'; }).join('') +
+      '<td class="pm-act">' + actions(r) + '</td></tr>';
+  }).join('');
+  return '<div class="pm-tw"><table class="pm-grid"><thead><tr><th class="pm-rn">#</th>' + th + '<th class="pm-act"></th></tr></thead><tbody>' + (body || '<tr><td colspan="' + (cols.length + 2) + '" class="pm-empty">Aucune ligne pour l’instant.</td></tr>') + '</tbody></table></div>';
+}
+
+/* ───────── Onglet Finances ───────── */
+var FIN_COLS = [
+  { k: 'label', h: 'Libellé', t: 'text', w: 190, ph: 'Ex. Nom de domaine' },
+  { k: 'kind', h: 'Type', t: 'sel', opts: [['exp', 'Dépense'], ['inc', 'Gain']] },
+  { k: 'amount', h: 'Montant (€)', t: 'num', w: 100 },
+  { k: 'period', h: 'Période', t: 'sel', opts: PERIODS },
+  { k: 'who', h: 'Payé / reçu par', t: 'text', list: 'pm-dl-who', w: 120, max: 40 },
+  { k: 'cat', h: 'Catégorie', t: 'text', list: 'pm-dl-cat', w: 110, max: 40 },
+  { k: 'note', h: 'Note', t: 'text', w: 160, max: 300 },
+  { k: 'year', h: 'Par an', t: 'calc', cls: 'num' },
+  { k: 'month', h: 'Par mois', t: 'calc', cls: 'num' }
+];
+function delBtn(sec, r) { return '<button class="pm-ic" data-pm-act="delrow" data-sec="' + sec + '" data-id="' + E(r.id) + '" aria-label="Supprimer la ligne" title="Supprimer">✕</button>'; }
+function finHtml() {
+  var dl = function (id, arr) { return '<datalist id="' + id + '">' + arr.map(function (v) { return '<option value="' + E(v) + '">'; }).join('') + '</datalist>'; };
+  return '<div class="pm-cards" id="pm-fin-sum"></div>' +
+    '<div class="pm-bar"><button class="btn-action btn-unlock" data-pm-act="addrow" data-kind="exp">+ Dépense</button><button class="btn-action btn-unlock" data-pm-act="addrow" data-kind="inc">+ Gain</button>' +
+    '<button class="btn-action btn-link" data-pm-act="export-csv">⬇ Export CSV (Excel)</button></div>' +
+    gridHtml('finance', FIN_COLS, PM.finance, function (r) { return delBtn('finance', r); }, function (r) { return 'pm-' + r.kind; }) +
+    '<p class="pm-hint">Astuce : <kbd>Entrée</kbd> descend d’une ligne, <kbd>Tab</kbd> passe à la cellule suivante. Un montant ponctuel compte dans le total annuel mais pas dans le mensuel.</p>' +
+    '<div class="card"><div class="card-title">Par personne</div><div class="pm-tw" id="pm-fin-people"></div></div>' +
+    dl('pm-dl-who', listOf('finance', 'who')) + dl('pm-dl-cat', listOf('finance', 'cat'));
+}
+function finRecalc() {
+  var t = totals(PM.finance), net = t.inc - t.exp, netM = t.incM - t.expM;
+  var card = function (lbl, val, cls, sub) { return '<div class="pm-stat ' + cls + '"><div class="v">' + E(val) + '</div><div class="l">' + E(lbl) + '</div>' + (sub ? '<div class="s">' + E(sub) + '</div>' : '') + '</div>'; };
+  var s = $('pm-fin-sum'); if (s) s.innerHTML = card('Dépenses / an', eur(t.exp), 'neg') + card('Gains / an', eur(t.inc), 'pos') + card('Solde / an', (net > 0 ? '+' : '') + eur(net), net < 0 ? 'neg' : 'pos') + card('Solde / mois', (netM > 0 ? '+' : '') + eur(netM), netM < 0 ? 'neg' : 'pos', 'hors ponctuel');
+  var names = Object.keys(t.people).sort(), p = $('pm-fin-people');
+  if (p) p.innerHTML = names.length ? '<table class="pm-mini"><thead><tr><th>Personne</th><th class="num">Dépense / an</th><th class="num">Gain / an</th><th class="num">Net</th></tr></thead><tbody>' +
+    names.map(function (n) { var x = t.people[n], nt = x.inc - x.exp; return '<tr><td>' + E(n) + '</td><td class="num">' + eur(x.exp) + '</td><td class="num">' + eur(x.inc) + '</td><td class="num ' + (nt < 0 ? 'neg' : 'pos') + '">' + (nt > 0 ? '+' : '') + eur(nt) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="pm-hint">Aucune donnée.</p>';
+  document.querySelectorAll('[data-calc]').forEach(function (td) {
+    var parts = td.dataset.calc.split(':'), r = rowById('finance', parts[0]); if (!r) return;
+    var v = parts[1] === 'year' ? yearOf(r) : monthOf(r), sg = r.kind === 'inc' ? '+' : '−';
+    td.textContent = v == null ? '—' : sg + eur(v).replace(/^-/, '');
+  });
+}
+
+/* ───────── Onglet Comptes & accès ───────── */
+var ACC_COLS = [
+  { k: 'service', h: 'Service', t: 'text', w: 150, max: 80, ph: 'Ex. Scaleway' },
+  { k: 'url', h: 'Lien (https)', t: 'text', w: 200, max: 300, ph: 'https://…' },
+  { k: 'login', h: 'Connexion via', t: 'sel', opts: LOGINS },
+  { k: 'account', h: 'Compte / identifiant', t: 'text', w: 190, max: 120, ph: 'email ou pseudo' },
+  { k: 'owner', h: 'Responsable', t: 'text', list: 'pm-dl-owner', w: 110, max: 40 },
+  { k: 'usage', h: 'Sert à', t: 'text', w: 150, max: 120 },
+  { k: 'note', h: 'Note', t: 'text', w: 160, max: 300 }
+];
+function accActions(r) {
+  var u = safeUrl(r.url);
+  return '<a class="pm-ic" data-open="' + E(r.id) + '" ' + (u ? 'href="' + E(u) + '"' : 'hidden') + ' target="_blank" rel="noopener noreferrer" title="Ouvrir" aria-label="Ouvrir le service">↗</a>' +
+    '<button class="pm-ic" data-pm-act="copy" data-id="' + E(r.id) + '" title="Copier le compte" aria-label="Copier le compte">⧉</button>' + delBtn('accounts', r);
+}
+function accHtml() {
+  return '<div class="pm-note pm-warnbox"><b>Ne stocke jamais de mot de passe ici.</b> Note seulement <i>où</i> on a un compte et <i>comment</i> s’y connecter (ex. « Google · wedevreach@gmail.com »). Les mots de passe vont dans un gestionnaire dédié.</div>' +
+    '<div class="pm-bar"><button class="btn-action btn-unlock" data-pm-act="addacc">+ Compte</button><input type="search" id="pm-acc-q" class="pm-search" placeholder="Filtrer (service, compte, usage…)" aria-label="Filtrer les comptes"></div>' +
+    gridHtml('accounts', ACC_COLS, PM.accounts, accActions) +
+    '<datalist id="pm-dl-owner">' + listOf('accounts', 'owner').concat(listOf('finance', 'who')).filter(function (v, i, a) { return a.indexOf(v) === i; }).map(function (v) { return '<option value="' + E(v) + '">'; }).join('') + '</datalist>';
+}
+function accFilter(q) {
+  q = String(q || '').toLowerCase().trim();
+  document.querySelectorAll('#pm-body tr.pm-row').forEach(function (tr) {
+    var r = rowById('accounts', tr.dataset.id); if (!r) return;
+    tr.hidden = !!q && [r.service, r.url, r.account, r.owner, r.usage, r.note].join(' ').toLowerCase().indexOf(q) < 0;
+  });
+}
+
+/* ───────── Onglet Écosystème (carte) ───────── */
+function ecoHtml() {
+  var legend = Object.keys(TYPES).map(function (k) { return '<span class="pm-lg pm-n-' + k + '"><i></i>' + TYPES[k].ico + ' ' + E(TYPES[k].label) + '</span>'; }).join('');
+  return '<div class="pm-bar"><button class="btn-action btn-unlock" data-pm-act="addnode">+ Nœud</button><button class="btn-action btn-link" data-pm-act="autolay">↺ Disposition automatique</button><span class="pm-legend">' + legend + '<span class="pm-lg"><i class="dash"></i> lien à confirmer</span></span></div>' +
+    '<div class="pm-eco"><div class="pm-canvas"><svg id="pm-svg" viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="Carte de l’écosystème ReLink">' +
+    '<defs><marker id="pm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker>' +
+    '<marker id="pm-arr-s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker></defs>' +
+    '<g id="pm-links"></g><g id="pm-nodes"></g></svg></div><aside class="pm-insp" id="pm-insp" aria-live="polite"></aside></div>';
+}
+function isSel(k, id) { return sel && sel.k === k && sel.id === id; }
+function nodeSvg(n) {
+  var T = TYPES[n.type] || TYPES.other;
+  return '<g class="pm-node pm-n-' + n.type + (isSel('node', n.id) ? ' sel' : '') + '" data-node="' + E(n.id) + '" transform="translate(' + (n.x - NW / 2) + ' ' + (n.y - NH / 2) + ')" tabindex="0" role="button" aria-label="' + E(n.name + ' — ' + T.label) + '">' +
+    '<rect width="' + NW + '" height="' + NH + '" rx="12"></rect><text class="pm-ni" x="14" y="' + (NH / 2 + 7) + '">' + T.ico + '</text>' +
+    '<text class="pm-nn" x="42" y="24">' + E(cut(n.name, 19)) + '</text><text class="pm-ns" x="42" y="42">' + E(T.label) + '</text><title>' + E(n.name) + '</title></g>';
+}
+function linksSvg() {
+  var groups = {};
+  PM.eco.links.forEach(function (l) { var k = [l.from, l.to].sort().join('|'); (groups[k] = groups[k] || []).push(l); });
+  return PM.eco.links.map(function (l) {
+    var a = nodeById(l.from), b = nodeById(l.to); if (!a || !b) return '';
+    var g = groups[[l.from, l.to].sort().join('|')], off = (g.indexOf(l) - (g.length - 1) / 2) * 18;
+    var dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1, ox = -dy / len * off, oy = dx / len * off;
+    var A = { x: a.x + ox, y: a.y + oy }, B = { x: b.x + ox, y: b.y + oy }, p1 = edgePoint(A, B), p2 = edgePoint(B, A);
+    var s = isSel('link', l.id), mk = s ? 'url(#pm-arr-s)' : 'url(#pm-arr)';
+    var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+    return '<g class="pm-link' + (s ? ' sel' : '') + (l.todo ? ' todo' : '') + '" data-link="' + E(l.id) + '">' +
+      '<line class="hit" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '"></line>' +
+      '<line class="vis" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '" marker-end="' + mk + '"' + (l.dir === 'both' ? ' marker-start="' + mk + '"' : '') + '></line>' +
+      (l.label ? '<text class="pm-ll" x="' + mx + '" y="' + (my - 6) + '" text-anchor="middle">' + E(cut(l.label, 26)) + '</text>' : '') + '</g>';
+  }).join('');
+}
+function drawLinks() { var g = $('pm-links'); if (g) g.innerHTML = linksSvg(); }
+function ecoDraw() { var g = $('pm-nodes'); if (!g) return; drawLinks(); g.innerHTML = PM.eco.nodes.map(nodeSvg).join(''); inspector(); }
+function select(k, id) { sel = k ? { k: k, id: id } : null; ecoDraw(); }
+function opt(arr, v) { return arr.map(function (o) { return '<option value="' + E(o[0]) + '"' + (o[0] === v ? ' selected' : '') + '>' + E(o[1]) + '</option>'; }).join(''); }
+function inspector() {
+  var el = $('pm-insp'); if (!el) return;
+  var f = function (lbl, inner) { return '<label class="pm-f"><span>' + lbl + '</span>' + inner + '</label>'; };
+  if (sel && sel.k === 'node' && nodeById(sel.id)) {
+    var n = nodeById(sel.id), others = PM.eco.nodes.filter(function (x) { return x.id !== n.id; });
+    var mine = PM.eco.links.filter(function (l) { return l.from === n.id || l.to === n.id; });
+    var u = safeUrl(n.url);
+    el.innerHTML = '<h3>' + TYPES[n.type].ico + ' ' + E(n.name || 'Nœud') + '</h3>' +
+      f('Nom', '<input type="text" data-eco="node" data-k="name" value="' + E(n.name) + '" maxlength="60">') +
+      f('Type', '<select data-eco="node" data-k="type">' + opt(Object.keys(TYPES).map(function (k) { return [k, TYPES[k].label]; }), n.type) + '</select>') +
+      f('Lien (https)', '<input type="text" data-eco="node" data-k="url" value="' + E(n.url) + '" maxlength="300" placeholder="https://…">') + (u ? '<a class="pm-open" href="' + E(u) + '" target="_blank" rel="noopener noreferrer">↗ Ouvrir</a>' : '') +
+      f('Notes', '<textarea data-eco="node" data-k="note" rows="3" maxlength="400">' + E(n.note) + '</textarea>') +
+      '<h4>Liens (' + mine.length + ')</h4>' + (mine.length ? '<ul class="pm-ll-list">' + mine.map(function (l) {
+        var o = nodeById(l.from === n.id ? l.to : l.from);
+        return '<li><button data-pm-act="sel-link" data-id="' + E(l.id) + '">' + (l.from === n.id ? '→' : '←') + ' ' + E(o ? o.name : '?') + (l.label ? ' · ' + E(l.label) : '') + (l.todo ? ' (?)' : '') + '</button></li>';
+      }).join('') + '</ul>' : '<p class="pm-hint">Aucun lien.</p>') +
+      (others.length ? '<div class="pm-addlink"><b>Relier ce nœud à…</b>' +
+        '<select id="pm-nl-to">' + opt(others.map(function (x) { return [x.id, x.name]; }), '') + '</select>' +
+        '<input type="text" id="pm-nl-label" placeholder="Nom du lien (ex. API, contenu)" maxlength="40">' +
+        '<select id="pm-nl-dir"><option value="to">→ vers l’autre</option><option value="both">↔ dans les deux sens</option></select>' +
+        '<label class="pm-chk"><input type="checkbox" id="pm-nl-todo"> à confirmer</label>' +
+        '<button class="btn-action btn-unlock" data-pm-act="addlink">Relier</button></div>' : '') +
+      '<button class="btn-action btn-confirm-danger pm-danger" data-pm-act="delnode">Supprimer le nœud</button>';
+  } else if (sel && sel.k === 'link' && linkById(sel.id)) {
+    var l = linkById(sel.id), a = nodeById(l.from), b = nodeById(l.to);
+    el.innerHTML = '<h3>Lien</h3><p class="pm-hint">' + E(a ? a.name : '?') + (l.dir === 'both' ? ' ↔ ' : ' → ') + E(b ? b.name : '?') + '</p>' +
+      f('Nom du lien', '<input type="text" data-eco="link" data-k="label" value="' + E(l.label) + '" maxlength="40">') +
+      f('Sens', '<select data-eco="link" data-k="dir">' + opt([['to', '→ un sens'], ['both', '↔ deux sens']], l.dir) + '</select>') +
+      '<label class="pm-chk"><input type="checkbox" data-eco="link" data-k="todo"' + (l.todo ? ' checked' : '') + '> à confirmer (trait pointillé)</label>' +
+      '<div class="pm-bar"><button class="btn-action btn-link" data-pm-act="swap">⇄ Inverser</button><button class="btn-action btn-link" data-pm-act="sel-node" data-id="' + E(l.from) + '">Aller à ' + E(a ? cut(a.name, 14) : '?') + '</button></div>' +
+      '<button class="btn-action btn-confirm-danger pm-danger" data-pm-act="dellink">Supprimer le lien</button>';
+  } else {
+    el.innerHTML = '<h3>Carte de l’écosystème</h3><p class="pm-hint">Clique sur un <b>nœud</b> ou un <b>lien</b> pour le modifier. Glisse les nœuds pour les placer (ou utilise les flèches du clavier). Pour relier deux éléments : sélectionne un nœud, puis « Relier ce nœud à… ».</p>' +
+      '<p class="pm-hint">Les liens en pointillés sont des <b>suppositions à confirmer</b> : corrige-les selon la réalité.</p>';
+  }
+}
+function svgPt(e) { var svg = $('pm-svg'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+function moveNode(n, x, y) {
+  n.x = clamp(x, NW / 2, W - NW / 2); n.y = clamp(y, NH / 2, H - NH / 2);
+  var g = document.querySelector('[data-node="' + n.id + '"]'); if (g) g.setAttribute('transform', 'translate(' + (n.x - NW / 2) + ' ' + (n.y - NH / 2) + ')');
+  drawLinks();
+}
+function autoLayout() {
+  var deg = {}; PM.eco.nodes.forEach(function (n) { deg[n.id] = 0; });
+  PM.eco.links.forEach(function (l) { deg[l.from]++; deg[l.to]++; });
+  var arr = PM.eco.nodes.slice().sort(function (a, b) { return deg[b.id] - deg[a.id]; });
+  if (!arr.length) return;
+  arr[0].x = W / 2; arr[0].y = H / 2;
+  var rest = arr.slice(1), k = rest.length;
+  rest.forEach(function (n, i) { var ang = -Math.PI / 2 + i * 2 * Math.PI / k; n.x = clamp(W / 2 + Math.cos(ang) * 320, NW / 2, W - NW / 2); n.y = clamp(H / 2 + Math.sin(ang) * 190, NH / 2, H - NH / 2); });
+  touch(); ecoDraw();
+}
+
+/* ───────── Actions ───────── */
+function addRow(kind) {
+  var r = { id: uid('f'), label: '', kind: kind === 'inc' ? 'inc' : 'exp', amount: 0, period: 'year', who: '', cat: '', note: '' };
+  PM.finance.push(r); touch(); render(); focusRow(r.id);
+}
+function focusRow(id) { var i = document.querySelector('tr[data-id="' + id + '"] input'); if (i) { i.focus(); i.scrollIntoView({ block: 'nearest' }); } }
+function download(name, mime, text) {
+  var a = document.createElement('a'), url = URL.createObjectURL(new Blob([text], { type: mime }));
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+var today = function () { return new Date().toISOString().slice(0, 10); };
+var ACTIONS = {
+  addrow: function (b) { addRow(b.dataset.kind); },
+  addacc: function () { var r = { id: uid('a'), service: '', url: '', login: 'google', account: '', owner: '', usage: '', note: '' }; PM.accounts.push(r); touch(); render(); focusRow(r.id); },
+  delrow: function (b) { var sec = b.dataset.sec, r = rowById(sec, b.dataset.id); if (!r) return; snapshot('Ligne supprimée.'); PM[sec].splice(PM[sec].indexOf(r), 1); touch(); render(); },
+  copy: function (b) { var r = rowById('accounts', b.dataset.id); if (!r || !r.account) { toast('Aucun compte à copier.', 'error'); return; } navigator.clipboard.writeText(r.account).then(function () { toast('Compte copié.'); }, function () { toast('Copie impossible.', 'error'); }); },
+  'export-csv': function () { download('relink-finances-' + today() + '.csv', 'text/csv;charset=utf-8', toCsv(PM.finance)); },
+  'export-json': function () { download('relink-projet-' + today() + '.json', 'application/json', JSON.stringify(PM, null, 2)); },
+  'import-json': function () { $('pm-imp').click(); },
+  reload: async function () { if (dirty && !(await window.confirm('Recharger ?', 'Des modifications n’ont pas encore été enregistrées.', 'btn-confirm-warn'))) return; loaded = false; dirty = false; pmOpen(true); },
+  undo: undo,
+  addnode: function () { var n = { id: uid('n'), name: 'Nouveau nœud', type: 'other', url: '', note: '', x: W / 2 + (Math.random() * 60 - 30), y: H / 2 + (Math.random() * 60 - 30) }; PM.eco.nodes.push(n); touch(); select('node', n.id); },
+  autolay: autoLayout,
+  'sel-link': function (b) { select('link', b.dataset.id); },
+  'sel-node': function (b) { select('node', b.dataset.id); },
+  addlink: function () {
+    var from = sel && sel.id, to = $('pm-nl-to').value; if (!from || !to || from === to) return;
+    var l = { id: uid('l'), from: from, to: to, label: $('pm-nl-label').value.trim().slice(0, 40), dir: $('pm-nl-dir').value === 'both' ? 'both' : 'to', todo: $('pm-nl-todo').checked };
+    PM.eco.links.push(l); touch(); select('link', l.id);
+  },
+  swap: function () { var l = linkById(sel.id); if (!l) return; var t = l.from; l.from = l.to; l.to = t; touch(); ecoDraw(); },
+  dellink: function () { var l = linkById(sel.id); if (!l) return; snapshot('Lien supprimé.'); PM.eco.links.splice(PM.eco.links.indexOf(l), 1); sel = null; touch(); ecoDraw(); },
+  delnode: function () {
+    var n = nodeById(sel.id); if (!n) return; snapshot('Nœud « ' + n.name + ' » supprimé.');
+    PM.eco.nodes.splice(PM.eco.nodes.indexOf(n), 1); PM.eco.links = PM.eco.links.filter(function (l) { return l.from !== n.id && l.to !== n.id; }); sel = null; touch(); ecoDraw();
+  }
+};
+function onInput(e) {
+  var el = e.target;
+  if (el.id === 'pm-acc-q') { accFilter(el.value); return; }
+  if (el.dataset.pm) {
+    var sec = el.dataset.pm, r = rowById(sec, el.dataset.id), k = el.dataset.k; if (!r) return;
+    var v = el.dataset.t === 'num' ? parseNum(el.value) : el.value;
+    if (sec === 'accounts' && typeof v === 'string' && PWD_RE.test(v)) {
+      el.classList.add('pm-bad');
+      if (!warned) { warned = true; toast('On ne stocke pas de mot de passe ici : ce texte n’est pas enregistré.', 'error'); }
+      return;
+    }
+    el.classList.remove('pm-bad');
+    r[k] = v; touch();
+    if (sec === 'finance') { if (k === 'kind') el.closest('tr').className = 'pm-row pm-' + v; finRecalc(); }
+    if (sec === 'accounts' && k === 'url') { var a = document.querySelector('[data-open="' + r.id + '"]'), u = safeUrl(v); if (a) { if (u) { a.href = u; a.hidden = false; } else { a.removeAttribute('href'); a.hidden = true; } } }
+    return;
+  }
+  if (el.dataset.eco && sel) {
+    var obj = el.dataset.eco === 'node' ? nodeById(sel.id) : linkById(sel.id); if (!obj) return;
+    var key = el.dataset.k; obj[key] = el.type === 'checkbox' ? el.checked : el.value; touch();
+    drawLinks(); var g = $('pm-nodes');
+    if (el.dataset.eco === 'node' && (key === 'name' || key === 'type')) {
+      g.innerHTML = PM.eco.nodes.map(nodeSvg).join('');
+      if (key === 'type') inspector(); else { var h = document.querySelector('#pm-insp h3'); if (h) h.textContent = TYPES[obj.type].ico + ' ' + (obj.name || 'Nœud'); }
+    }
+    if (el.dataset.eco === 'link' && key === 'dir') inspector();
+  }
+}
+function onClick(e) {
+  var t = e.target.closest('[data-pm-tab]'); if (t) { tab = t.dataset.pmTab; sel = null; render(); return; }
+  var b = e.target.closest('[data-pm-act]'); if (b && ACTIONS[b.dataset.pmAct]) { ACTIONS[b.dataset.pmAct](b); return; }
+  var ln = e.target.closest('[data-link]'); if (ln && !drag) { select('link', ln.dataset.link); return; }
+  if (e.target.id === 'pm-svg' && sel) select(null);
+}
+function onKey(e) {
+  var el = e.target;
+  if (e.key === 'Enter' && el.dataset && el.dataset.pm && el.tagName === 'INPUT') {
+    e.preventDefault(); var tr = el.closest('tr'), next = tr.nextElementSibling;
+    while (next && next.hidden) next = next.nextElementSibling;
+    if (next) { var same = next.querySelector('[data-k="' + el.dataset.k + '"]'); if (same) same.focus(); }
+    else if (el.dataset.pm === 'finance') { var cur = rowById('finance', el.dataset.id); addRow(cur ? cur.kind : 'exp'); }
+    return;
+  }
+  var g = el.closest && el.closest('[data-node]');
+  if (g) {
+    var n = nodeById(g.dataset.node); if (!n) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select('node', n.id); setTimeout(function () { var q = document.querySelector('[data-node="' + n.id + '"]'); if (q) q.focus(); }, 0); }
+    var st = e.shiftKey ? 40 : 10, d = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[e.key];
+    if (d) { e.preventDefault(); moveNode(n, n.x + d[0], n.y + d[1]); touch(); }
+  }
+}
+function onDown(e) {
+  var g = e.target.closest && e.target.closest('[data-node]'); if (!g || e.button !== 0 || !$('pm-svg').contains(g)) return;
+  var n = nodeById(g.dataset.node), p = svgPt(e); if (!n) return;
+  drag = { n: n, g: g, dx: p.x - n.x, dy: p.y - n.y, sx: e.clientX, sy: e.clientY, moved: false };
+  try { g.setPointerCapture(e.pointerId); } catch (x) {}
+}
+function onMove(e) {
+  if (!drag) return;
+  if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 4) return;
+  drag.moved = true; var p = svgPt(e); moveNode(drag.n, p.x - drag.dx, p.y - drag.dy);
+}
+function onUp() {
+  if (!drag) return; var d = drag; drag = null;
+  if (d.moved) { touch(); } else { select('node', d.n.id); }
+}
+async function onImport(e) {
+  var f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.size > 2 * 1024 * 1024) { toast('Fichier trop gros (2 Mo max).', 'error'); return; }
+  try {
+    var d = JSON.parse(await f.text());
+    if (!d || typeof d !== 'object' || (!Array.isArray(d.finance) && !d.eco && !Array.isArray(d.accounts))) throw new Error('format');
+    if (!(await window.confirm('Remplacer les données ?', 'Les finances, la carte et les comptes actuels seront remplacés par ceux du fichier.', 'btn-confirm-warn'))) return;
+    snapshot('Import effectué.'); PM = normalize(d); sel = null; touch(); render();
+  } catch (x) { toast('Fichier invalide : ce n’est pas une sauvegarde du projet.', 'error'); }
+}
+
+/* ───────── Branchement ───────── */
+window.pmOpen = pmOpen;
+var root = $('page-project');
+if (root) {
+  root.addEventListener('input', onInput); root.addEventListener('change', onInput); root.addEventListener('click', onClick);
+  root.addEventListener('keydown', onKey); root.addEventListener('pointerdown', onDown); root.addEventListener('pointermove', onMove);
+  root.addEventListener('pointerup', onUp); root.addEventListener('pointercancel', onUp);
+  $('pm-imp').addEventListener('change', onImport);
+}
+var _lp = loadPage;
+loadPage = function (n) { if (n === 'project') { pmOpen(); return; } _lp(n); };
+var _cp = cpBuildItems;
+cpBuildItems = function () {
+  var it = _cp();
+  it.push({ group: 'Pages', id: 'page:project', ico: '🗂️', label: 'Gestion du projet', hint: 'Finances, écosystème, comptes & accès', kw: 'projet finances dépenses gains budget tableur carte mentale écosystème comptes accès domaine scaleway', run: function () { showPage('project'); } });
+  return it;
+};
+})();
+</script>
+
 </body></html>
