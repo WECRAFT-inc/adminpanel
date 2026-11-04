@@ -6745,14 +6745,26 @@ function healthRows(sv){return Object.keys(sv).filter(function(key){return key!=
   if(key==='storage')return {n:'STOCKAGE',s:sv.storage==='unconfigured'?'bad':'ok',d:sv.storage==='remote'?'Machine de stockage dédiée':sv.storage==='r2'?'Fichiers dans R2':'Machine dédiée demandée, réglages manquants'};
   var ok=sv[key]==='ok';return {n:key==='github'?'GITHUB (RELEASES)':key==='discord'?'CONNEXION DISCORD':key.toUpperCase(),s:ok?'ok':'bad',d:ok?'Disponible':key==='r2'?'Binding R2 manquant':key==='github'?'RELAUNCH_GITHUB_TOKEN manquant':key==='discord'?'DISCORD_CLIENT_ID manquant':'Indisponible'}})}
 async function loadLauncherState(){
-  if(CFG.simulate||stateLoaded||stateLoading)return;
-  stateLoading=true;stateLoadError='';
-  try{
-    var state=await window.apiFetch(ROUTES.state[1],'GET');
-    if(!state||!state.collections)throw new Error('Réponse d’état launcher invalide.');
-    applyLauncherState(state);stateLoaded=true;
-  }catch(e){stateLoadError=e.message||String(e)}
-  finally{stateLoading=false;render()}
+  if(CFG.simulate || stateLoaded || stateLoading || stateLoadError) return;
+
+  stateLoading = true;
+  stateLoadError = '';
+
+  try {
+    var state = await window.apiFetch(ROUTES.state[1], 'GET');
+
+    if(!state || !state.collections) {
+      throw new Error('Réponse d’état launcher invalide.');
+    }
+
+    applyLauncherState(state);
+    stateLoaded = true;
+  } catch(e) {
+    stateLoadError = e.message || String(e);
+  } finally {
+    stateLoading = false;
+    render();
+  }
 }
 function render(){
   renderNav();
