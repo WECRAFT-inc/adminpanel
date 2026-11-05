@@ -1125,6 +1125,119 @@
 .qs-mk { font-size: var(--fs-2xs); font-weight: 700; padding: 1px 6px; border-radius: var(--r-pill); text-transform: uppercase; letter-spacing: .04em; }
 .qs-mk.new { background: var(--green-bg); color: var(--green); } .qs-mk.mod { background: var(--amber-bg); color: var(--amber); }
 .pm-ic:disabled { opacity: .3; cursor: default; }
+
+/* ═══ Formulaires : liste + lecteur ═══ */
+.fm-total { font-size: var(--fs-xs); color: var(--muted); padding: 3px 10px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); }
+.fm-total:empty { display: none; }
+.fm-toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.fm-toolbar .pm-search { margin-left: auto; flex: 1; min-width: 220px; max-width: 440px; }
+.fm-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.fm-chips:empty { display: none; }
+.fm-chip { padding: 5px 12px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--muted); font: 600 var(--fs-sm)/1.4 var(--font); cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+.fm-chip:hover { color: var(--text); border-color: var(--border-hi); }
+.fm-chip.active { color: var(--accent); border-color: var(--accent); background: var(--accent-bg); }
+.fm-n { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 4px; border-radius: var(--r-pill); background: rgba(255,255,255,.08); font-size: var(--fs-2xs); font-weight: 700; text-align: center; line-height: 1.7; }
+.fm-card { padding: 0; overflow: hidden; }
+.fm-table { width: 100%; border-collapse: collapse; }
+.fm-table th { text-align: left; padding: 10px 16px; font-size: var(--fs-2xs); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.fm-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.fm-table tbody tr:last-child td { border-bottom: 0; }
+.fm-row { cursor: pointer; transition: background .12s; }
+.fm-row:hover, .fm-row:focus-visible { background: var(--surface); }
+.fm-row:focus-visible { outline-offset: -2px; }
+.fm-row.is-new td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.fm-row.is-new .fm-name { font-weight: 700; }
+.fm-who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.fm-who .avatar, .fm-who .avatar-placeholder { width: 36px; height: 36px; margin: 0; flex: none; }
+.fm-name { font-size: var(--fs-md); color: var(--text); }
+.fm-sub { font-size: var(--fs-xs); color: var(--muted); }
+.fm-prev { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: var(--fs-sm); }
+.fm-prev-k { color: var(--text); font-weight: 600; }
+.fm-when { white-space: nowrap; color: var(--muted); font-size: var(--fs-sm); }
+.fm-act { white-space: nowrap; text-align: right; }
+.fm-act .btn-action + .btn-action { margin-left: 6px; }
+.fm-type { display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px; border-radius: var(--r-pill); font-size: var(--fs-xs); font-weight: 600; background: var(--accent-bg); color: var(--accent); white-space: nowrap; }
+.fm-t-team { background: var(--amber-bg); color: var(--amber); }
+.fm-t-aide { background: rgba(45,212,191,.14); color: #2dd4bf; }
+.fm-t-relaunch { background: var(--green-bg); color: var(--green); }
+.fm-st { display: inline-block; padding: 2px 10px; border-radius: var(--r-pill); font-size: var(--fs-xs); font-weight: 700; background: var(--surface); color: var(--muted); border: 1px solid var(--border); white-space: nowrap; }
+.fm-st-new { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
+.fm-st-ok { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.fm-st-no { background: var(--red-bg); color: var(--red); border-color: transparent; }
+.fm-more { text-align: center; }
+.fm-more[hidden] { display: none; }
+.fm-skel { height: 44px; margin: 10px 0; border-radius: var(--r-lg); background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%) 0 0 / 200% 100%; animation: fmShimmer 1.2s linear infinite; }
+@keyframes fmShimmer { to { background-position: -200% 0; } }
+@media (max-width: 900px) { .fm-table th:nth-child(4), .fm-table td:nth-child(4) { display: none; } }
+@media (max-width: 680px) { .fm-table th:nth-child(5), .fm-table td:nth-child(5) { display: none; } .fm-table td, .fm-table th { padding: 10px 12px; } }
+
+/* Lecteur (panneau latéral, même esprit que la fiche utilisateur) */
+.fm-overlay { position: fixed; inset: 0; z-index: 85; display: none; justify-content: flex-end; background: rgba(0,0,0,.55); backdrop-filter: blur(2px); }
+.fm-overlay.open { display: flex; }
+.fm-panel { width: min(700px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--border); box-shadow: -24px 0 60px rgba(0,0,0,.45); outline: none; animation: fmSlide .22s cubic-bezier(.2,.8,.2,1); }
+@keyframes fmSlide { from { transform: translateX(36px); opacity: 0; } to { transform: none; opacity: 1; } }
+.fm-banner { flex: none; height: 74px; background: linear-gradient(135deg, var(--accent), #8b5cf6); }
+.fm-b-team { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.fm-b-aide { background: linear-gradient(135deg, #14b8a6, #3b82f6); }
+.fm-b-relaunch { background: linear-gradient(135deg, #22c55e, #14b8a6); }
+.fm-top { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 16px; }
+.fm-nav { display: flex; align-items: center; gap: 6px; }
+.fm-nav button, .fm-close { width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(0,0,0,.28); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; transition: background .15s; }
+.fm-nav button:hover:not(:disabled), .fm-close:hover { background: rgba(0,0,0,.5); }
+.fm-nav button:disabled { opacity: .35; cursor: default; }
+.fm-pos { margin-left: 4px; padding: 2px 10px; border-radius: var(--r-pill); background: rgba(0,0,0,.28); color: #fff; font-size: var(--fs-xs); font-weight: 600; }
+.fm-pos:empty { display: none; }
+.fm-head { display: flex; align-items: flex-end; gap: 16px; padding: 0 24px; margin-top: -36px; position: relative; }
+.fm-headtxt { min-width: 0; padding-bottom: 4px; }
+.fm-ava { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 4px solid var(--card); object-fit: cover; background: var(--surface); }
+.fm-ava-ph { display: inline-flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: var(--accent); background: var(--accent-bg); }
+.fm-title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.fm-chips-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 14px 24px 0; }
+.fm-chip-ro, .fm-chip-btn { padding: 3px 10px; border-radius: var(--r-pill); border: 1px solid var(--border); background: var(--surface); color: var(--muted); font: 600 var(--fs-xs)/1.5 var(--font); }
+.fm-chip-btn { cursor: pointer; color: var(--text); transition: border-color .15s; }
+.fm-chip-btn:hover { border-color: var(--accent); }
+.fm-chip-warn { color: var(--red); border-color: rgba(232,80,80,.4); background: var(--red-bg); }
+.fm-body { flex: 1; overflow-y: auto; padding: 18px 24px 24px; display: flex; flex-direction: column; gap: 16px; }
+.fm-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.fm-fact { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 10px 14px; min-width: 0; }
+.fm-fact .k { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.fm-fact .v { margin-top: 3px; font-size: var(--fs-md); overflow-wrap: anywhere; }
+.fm-fact code { font-size: var(--fs-sm); }
+.fm-copy { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 3px; font-size: var(--fs-md); }
+.fm-copy:hover { color: var(--accent); }
+.fm-long { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 var(--r-lg) var(--r-lg) 0; padding: 12px 18px 14px; }
+.fm-long h4 { margin: 0 0 6px; font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+.fm-long .v { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; font-size: var(--fs-md); }
+.fm-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.fm-msg-h { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: var(--fs-xs); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
+.fm-msg-h::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.fm-info { padding: 14px 16px; border: 1px dashed var(--border-hi); border-radius: var(--r-lg); color: var(--muted); font-size: var(--fs-md); line-height: 1.6; }
+.fm-info-err { color: var(--red); border-color: rgba(232,80,80,.4); }
+.fm-review { border: 1px solid var(--border); border-radius: var(--r-xl); padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 12px; }
+.fm-review-h { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.fm-seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.fm-seg button { padding: 7px 14px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--card); color: var(--text); font: 600 var(--fs-sm)/1.4 var(--font); cursor: pointer; transition: border-color .15s, background .15s; }
+.fm-seg button:hover { border-color: var(--border-hi); }
+.fm-seg button.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.fm-notelab { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-xs); color: var(--muted); }
+.fm-notelab small { color: var(--muted); opacity: .8; }
+.fm-notelab textarea { resize: vertical; min-height: 72px; }
+.fm-review-meta { display: flex; gap: 4px; justify-content: flex-end; font-size: var(--fs-xs); color: var(--muted); min-height: 1em; }
+.fm-foot { flex: none; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 24px; border-top: 1px solid var(--border); background: var(--card); }
+.fm-spacer { flex: 1; }
+@media (max-width: 680px) { .fm-head, .fm-chips-row, .fm-body, .fm-foot { padding-left: 16px; padding-right: 16px; } }
+
+/* ═══ Finition globale (douce, sans changer la mise en page) ═══ */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+::selection { background: rgba(92,110,247,.35); }
+* { scrollbar-width: thin; scrollbar-color: var(--border-hi) transparent; }
+.page.active { animation: pgIn .2s ease-out; }
+@keyframes pgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.table-wrap tbody tr { transition: background .12s; }
+@media (prefers-reduced-motion: reduce) {
+  .page.active, .fm-panel, .fm-skel { animation: none !important; }
+  .fm-chip, .fm-row, .fm-seg button, .table-wrap tbody tr { transition: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1443,32 +1556,41 @@
     <!-- ── Page Formulaires ── -->
     <div id="page-submissions" class="page">
       <div class="page-header">
-        <h2>Formulaires soumis</h2>
+        <h2>Formulaires</h2>
+        <span class="fm-total" id="fm-total" aria-live="polite"></span>
+        <div class="pm-hdr-actions">
+          <button class="btn-action btn-link" data-fm-act="refresh" title="Actualiser" aria-label="Actualiser">↻</button>
+        </div>
       </div>
 
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn-action btn-unlock u-fs-13-p-7-14" onclick="filterSubs(null)">Tous</button>
-        <button class="btn-action btn-unlock u-fs-13-p-7-14" onclick="filterSubs('partner')">Partenaire</button>
-        <button class="btn-action btn-unlock u-fs-13-p-7-14" onclick="filterSubs('team')">Équipe</button>
-      </div>
+      <div id="fm-note" class="pm-note" hidden></div>
 
-      <div class="card">
+      <div class="fm-toolbar">
+        <div class="subtabs u-m-0" id="fm-types" role="tablist" aria-label="Type de formulaire"></div>
+        <input type="search" id="fm-q" class="pm-search" placeholder="Rechercher : pseudo, ID Discord, texte du formulaire…" aria-label="Rechercher un formulaire" autocomplete="off">
+      </div>
+      <div class="fm-chips" id="fm-status" role="group" aria-label="Filtrer par statut"></div>
+
+      <div class="card fm-card">
         <div class="table-wrap">
-          <table>
+          <table class="fm-table">
             <thead>
               <tr>
-                <th>Utilisateur</th>
-                <th>Type</th>
-                <th>Soumis le</th>
-                <th>Action</th>
+                <th>Candidat</th>
+                <th>Formulaire</th>
+                <th>Statut</th>
+                <th>Aperçu</th>
+                <th>Reçu</th>
+                <th><span class="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody id="subs-tbody">
-              <tr><td colspan="4" class="empty-state"><span class="spinner"></span>Chargement…</td></tr>
+              <tr><td colspan="6" class="empty-state"><span class="spinner"></span>Chargement…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
+      <div class="fm-more" id="fm-more" hidden><button class="btn-action btn-link" data-fm-act="more">Charger plus</button></div>
     </div>
 
     <!-- ── Page Éclats & Boutique ── -->
@@ -3023,51 +3145,320 @@ function gotoPage(i) {
   loadUsers();
 }
 
-// ── Page Formulaires ──────────────────────────────────────────────────────
-function filterSubs(type) {
-  currentSubFilter = type;
-  loadSubmissions(type);
+// ── Page Formulaires : liste + lecteur (panneau latéral) ─────────────────────
+// Données : GET /admin/forms (liste), GET /admin/forms/:type/:key (fiche), PUT .../review (statut + note).
+// Si le Worker n'a pas encore ces routes, la page retombe sur l'ancien GET /admin/submissions (sans contenu).
+const FM_TYPES = { partner: ['🤝', 'Partenaire'], team: ['⚔️', 'Équipe'], aide: ['🆘', 'Aide'], relaunch: ['🚀', 'Partenaire ReLaunch'] };
+const FM_STATUS = { new: ['Nouveau', 'new'], seen: ['Vu', 'seen'], accepted: ['Accepté', 'ok'], declined: ['Refusé', 'no'] };
+const FM_STATUS_PL = { new: 'Nouveaux', seen: 'Vus', accepted: 'Acceptés', declined: 'Refusés' };
+const FM_PAGE = 30;
+const FM = { type: null, status: null, q: '', entries: [], total: 0, counts: null, legacy: false, token: 0, vtoken: 0, view: null, lastFocus: null, qTimer: null, noteTimer: null };
+const fmEl = (id) => document.getElementById(id);
+
+/*FM_PURE_START*/
+const fmType = (t) => FM_TYPES[t] || ['📝', String(t)];
+const fmReserved = (t) => t === 'partner' || t === 'team';   // formulaires « une soumission par compte » (déblocable)
+// SQLite écrit « AAAA-MM-JJ HH:MM:SS » en UTC sans fuseau : sans correction, le navigateur le lirait en heure locale.
+function fmParse(iso) {
+  if (!iso) return NaN;
+  const s = String(iso);
+  return Date.parse(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(s) ? s.replace(' ', 'T') + 'Z' : s);
+}
+function fmAgo(iso, now = Date.now()) {
+  const t = fmParse(iso); if (!Number.isFinite(t)) return '—';
+  const s = Math.max(0, (now - t) / 1000);
+  if (s < 60) return 'à l’instant';
+  if (s < 3600) return `il y a ${Math.floor(s / 60)} min`;
+  if (s < 86400) return `il y a ${Math.floor(s / 3600)} h`;
+  if (s < 7 * 86400) return `il y a ${Math.floor(s / 86400)} j`;
+  return new Date(t).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+const fmFull = (iso) => { const t = fmParse(iso); return Number.isFinite(t) ? new Date(t).toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' }) : ''; };
+// Texte d'un champ : échappé d'abord, puis seules les adresses http(s) deviennent des liens.
+function fmFmt(text) {
+  return esc(String(text ?? '')).replace(/\bhttps?:\/\/[^\s<>"']+/gi, (u) => {
+    const m = u.match(/^(.*?)([.,;:!?)\]]*)$/);
+    return `<a href="${m[1]}" target="_blank" rel="noopener noreferrer">${m[1]}</a>${m[2]}`;
+  });
+}
+const fmShort = (f) => String(f.value).length <= 80 && !String(f.value).includes('\n');   // petite valeur : tuile de résumé
+function fmAvatar(e, cls, ph) {
+  return e && e.avatar_url ? `<img class="${cls}" src="${esc(e.avatar_url)}" alt="" loading="lazy">` : `<span class="${ph}">${esc(String((e && (e.pseudo || (e.discord_id ? '#' : ''))) || '?')[0].toUpperCase())}</span>`;
+}
+function fmRow(e) {
+  const [ico, label] = fmType(e.form_type), st = FM_STATUS[e.status] || FM_STATUS.new;
+  const name = e.pseudo || e.discord_id || 'Anonyme';
+  const sub = e.discord_id ? `${esc(e.discord_id)}${e.minecraft_username ? ' · ⛏ ' + esc(e.minecraft_username) : ''}` : 'Sans compte';
+  const prev = e.preview ? `<span class="fm-prev-k">${esc(e.preview.name)}</span> ${esc(e.preview.value)}`
+    : (e.discord_id && !e.msgs ? '<span class="u-muted">Contenu non conservé</span>' : '—');
+  const unlock = fmReserved(e.form_type) && e.locked !== false
+    ? `<button class="btn-action btn-link" data-fm-act="unlock" data-fm-pseudo="${esc(e.pseudo || e.discord_id || '')}">Débloquer</button>` : '';
+  return `<tr class="fm-row${e.status === 'new' ? ' is-new' : ''}" tabindex="0" data-fm-type="${esc(e.form_type)}" data-fm-key="${esc(e.key)}">
+    <td><div class="fm-who">${fmAvatar(e, 'avatar', 'avatar-placeholder')}<div><div class="fm-name">${esc(name)}</div><div class="fm-sub">${sub}</div></div></div></td>
+    <td><span class="fm-type fm-t-${esc(e.form_type)}">${ico} ${esc(label)}</span></td>
+    <td><span class="fm-st fm-st-${st[1]}">${st[0]}</span></td>
+    <td class="fm-prev">${prev}</td>
+    <td class="fm-when" title="${esc(fmFull(e.created_at))}">${esc(fmAgo(e.created_at))}</td>
+    <td class="fm-act"><button class="btn-action btn-unlock" data-fm-act="open">Ouvrir</button>${unlock}</td></tr>`;
+}
+function fmCopyText(d) {
+  const [, label] = fmType(d.form_type), u = d.user || {};
+  const out = [`Formulaire ${label} — ${u.pseudo || u.discord_id || 'Anonyme'}${u.discord_id ? ` (${u.discord_id})` : ''}`];
+  if (d.submitted_at) out.push(`Reçu le ${fmFull(d.submitted_at)}`);
+  if (u.minecraft_username) out.push(`Minecraft : ${u.minecraft_username}`);
+  d.messages.forEach((m, i) => {
+    if (d.messages.length > 1) out.push('', `── Envoi ${i + 1}/${d.messages.length} ──`);
+    m.fields.forEach((f) => out.push('', `${f.name} :`, String(f.value)));
+  });
+  return out.join('\n');
+}
+/*FM_PURE_END*/
+
+function filterSubs(type) { FM.type = type || null; currentSubFilter = FM.type; loadSubmissions(FM.type); }
+
+// Point d'entrée historique : loadPage('submissions') appelle loadSubmissions(currentSubFilter).
+async function loadSubmissions(type, more = false) {
+  if (type !== undefined && !more) { FM.type = type || null; currentSubFilter = FM.type; }
+  const body = fmEl('subs-tbody'); if (!body) return;
+  const token = ++FM.token;
+  if (!more) body.innerHTML = '<tr><td colspan="6"><div class="fm-skel"></div><div class="fm-skel"></div><div class="fm-skel"></div></td></tr>';
+  const qs = new URLSearchParams({ limit: String(FM_PAGE), offset: String(more ? FM.entries.length : 0) });
+  if (FM.type) qs.set('type', FM.type);
+  if (FM.status) qs.set('status', FM.status);
+  if (FM.q) qs.set('q', FM.q);
+  const d = await apiFetch('/admin/forms?' + qs);
+  if (token !== FM.token) return;                                   // une recherche plus récente a pris le relais
+  if (d.status === 404) return fmLegacyLoad(token);                 // routes /admin/forms absentes du Worker
+  if (d.error) { body.innerHTML = `<tr><td colspan="6" class="empty-state">${esc(errMsg(d))}</td></tr>`; return; }
+  FM.legacy = false; fmEl('fm-note').hidden = true;
+  FM.entries = more ? FM.entries.concat(d.entries) : d.entries;
+  FM.total = d.total; FM.counts = d.counts;
+  fmRenderAll();
+}
+async function fmLegacyLoad(token) {
+  const d = await apiFetch('/admin/submissions' + (FM.type ? `?type=${encodeURIComponent(FM.type)}` : ''));
+  if (token !== FM.token) return;
+  if (d.error) { fmEl('subs-tbody').innerHTML = `<tr><td colspan="6" class="empty-state">${esc(errMsg(d))}</td></tr>`; return; }
+  FM.legacy = true; FM.status = null;
+  const q = FM.q.toLowerCase();
+  FM.entries = (d.submissions || []).filter((s) => !q || [s.pseudo, s.discord_id].join(' ').toLowerCase().includes(q))
+    .map((s) => ({ form_type: s.type, key: s.discord_id, discord_id: s.discord_id, pseudo: s.pseudo, avatar_url: s.avatar_url, created_at: s.created_at, status: 'new', msgs: 0, locked: true, preview: null }));
+  FM.total = FM.entries.length; FM.counts = null;
+  const n = fmEl('fm-note');
+  n.innerHTML = '<b>Affichage simplifié.</b> Le Worker n’a pas encore les routes <code>/admin/forms</code> : le contenu des formulaires n’est pas disponible ici (il reste dans Discord). Ajoute <code>worker-additions.js</code> au Worker pour l’afficher dans le panel.';
+  n.hidden = false;
+  fmRenderAll();
 }
 
-async function loadSubmissions(type) {
-  const qs = type ? `?type=${type}` : '';
-  const data = await apiFetch('/admin/submissions' + qs);
-  const subs = data.submissions || [];
-  const tbody = document.getElementById('subs-tbody');
+function fmRenderAll() { fmRenderTabs(); fmRenderList(); }
+function fmRenderTabs() {
+  const c = FM.counts, bt = (c && c.by_type) || {}, bs = (c && c.by_status) || {};
+  const types = ['partner', 'team', 'aide'].concat(bt.relaunch || FM.type === 'relaunch' ? ['relaunch'] : []);
+  const tab = (t, label, n) => `<button class="subtab${(FM.type || null) === t ? ' active' : ''}" role="tab" aria-selected="${(FM.type || null) === t}" data-fm-tab="${t || ''}">${label}${n != null ? ` <span class="fm-n">${n}</span>` : ''}</button>`;
+  fmEl('fm-types').innerHTML = tab(null, 'Tous', c ? c.all : null) + types.map((t) => tab(t, fmType(t).join(' '), c ? (bt[t] || 0) : null)).join('');
+  const chip = (s, label, n) => `<button class="fm-chip${(FM.status || null) === s ? ' active' : ''}" aria-pressed="${(FM.status || null) === s}" data-fm-status-filter="${s || ''}">${label}${n != null ? ` <span class="fm-n">${n}</span>` : ''}</button>`;
+  fmEl('fm-status').innerHTML = FM.legacy ? '' : chip(null, 'Tous les statuts', null) + Object.keys(FM_STATUS).map((s) => chip(s, FM_STATUS_PL[s], c ? (bs[s] || 0) : null)).join('');
+  fmEl('fm-total').textContent = FM.total ? `${FM.total} formulaire${FM.total > 1 ? 's' : ''}` : '';
+}
+function fmRenderList() {
+  const body = fmEl('subs-tbody');
+  if (!FM.entries.length) {
+    const filtered = FM.type || FM.status || FM.q;
+    body.innerHTML = `<tr><td colspan="6" class="empty-state">${filtered ? 'Aucun formulaire ne correspond à ces filtres.<br><button class="btn-action btn-link" data-fm-act="reset">Réinitialiser les filtres</button>' : 'Aucun formulaire reçu pour l’instant.'}</td></tr>`;
+  } else body.innerHTML = FM.entries.map(fmRow).join('');
+  fmEl('fm-more').hidden = FM.entries.length >= FM.total;
+}
 
-  if (!subs.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Aucune soumission.</td></tr>';
+/* ───────── Lecteur ───────── */
+function fmEnsureViewer() {
+  if (fmEl('fm-overlay')) return;
+  const el = document.createElement('div');
+  el.id = 'fm-overlay'; el.className = 'fm-overlay'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'fm-title');
+  el.innerHTML = '<div class="fm-panel" id="fm-panel" tabindex="-1"></div>';
+  document.body.appendChild(el);
+  el.addEventListener('mousedown', (e) => { if (e.target === el) fmClose(); });
+  el.addEventListener('click', fmViewerClick);
+  el.addEventListener('input', (e) => { if (e.target.id === 'fm-note-ta') { clearTimeout(FM.noteTimer); fmEl('fm-note-state').textContent = ''; FM.noteTimer = setTimeout(fmSaveNote, 1200); } });
+  el.addEventListener('focusout', (e) => { if (e.target.id === 'fm-note-ta') fmSaveNote(); });
+  el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && e.target.id === 'fm-note-ta') { e.preventDefault(); fmSaveNote(); } });
+}
+async function fmOpen(type, key, refresh) {
+  fmEnsureViewer();
+  const ov = fmEl('fm-overlay');
+  if (!ov.classList.contains('open')) { FM.lastFocus = document.activeElement; ov.classList.add('open'); }
+  const token = ++FM.vtoken, entry = FM.entries.find((e) => e.form_type === type && e.key === key);
+  FM.view = { type, key, data: null, entry };
+  if (!refresh) fmRenderViewer();
+  let d;
+  if (FM.legacy) {
+    d = { ok: true, legacy: true, form_type: type, key, user: { discord_id: entry?.discord_id || key, pseudo: entry?.pseudo, avatar_url: entry?.avatar_url, minecraft_username: entry?.minecraft_username }, submitted_at: entry?.created_at, locked: true, messages: [], review: { status: 'new', note: '' } };
+  } else d = await apiFetch(`/admin/forms/${encodeURIComponent(type)}/${encodeURIComponent(key)}`);
+  if (token !== FM.vtoken) return;                                  // navigation plus rapide que la réponse
+  if (d.error) { FM.view = { type, key, error: errMsg(d), entry }; fmRenderViewer(); return; }
+  FM.view = { type, key, data: d, entry };
+  fmRenderViewer();
+  if (!refresh) fmEl('fm-panel').focus();
+  if (!FM.legacy && d.review.status === 'new') fmSetReview({ status: 'seen' }, true);   // ouvrir = marquer « vu » (« Remettre en nouveau » pour annuler)
+}
+function fmClose() {
+  const ov = fmEl('fm-overlay'); if (!ov || !ov.classList.contains('open')) return;
+  clearTimeout(FM.noteTimer); fmSaveNote();
+  ov.classList.remove('open'); FM.view = null; FM.vtoken++;
+  if (FM.lastFocus && FM.lastFocus.focus) FM.lastFocus.focus();
+}
+function fmViewerIndex() { const v = FM.view; return v ? FM.entries.findIndex((e) => e.form_type === v.type && e.key === v.key) : -1; }
+async function fmStep(dir) {
+  let i = fmViewerIndex(); if (i < 0) return;
+  if (dir > 0 && i === FM.entries.length - 1 && FM.entries.length < FM.total) { await loadSubmissions(undefined, true); i = fmViewerIndex(); }
+  const n = FM.entries[i + dir]; if (n) fmOpen(n.form_type, n.key);
+}
+function fmRenderViewer() {
+  const v = FM.view, p = fmEl('fm-panel'); if (!v || !p) return;
+  const [ico, label] = fmType(v.type), idx = fmViewerIndex(), d = v.data;
+  const top = `<div class="fm-banner fm-b-${esc(v.type)}"><div class="fm-top"><div class="fm-nav">
+      <button data-fm-act="prev" title="Formulaire précédent (←)" aria-label="Formulaire précédent"${idx <= 0 ? ' disabled' : ''}>‹</button>
+      <button data-fm-act="next" title="Formulaire suivant (→)" aria-label="Formulaire suivant"${idx < 0 || idx >= FM.total - 1 ? ' disabled' : ''}>›</button>
+      <span class="fm-pos">${idx >= 0 ? `${idx + 1} / ${FM.total}` : ''}</span></div>
+      <button class="fm-close" data-fm-act="close" title="Fermer (Échap)" aria-label="Fermer">×</button></div></div>`;
+  if (v.error || !d) {
+    const e = v.entry || {};
+    p.innerHTML = top + `<div class="fm-head"><span class="fm-ava fm-ava-ph">${esc(ico)}</span><div><h2 class="fm-title" id="fm-title">${esc(e.pseudo || e.discord_id || label)}</h2><div class="fm-sub">${esc(label)}</div></div></div>
+      <div class="fm-body">${v.error ? `<div class="fm-info fm-info-err">${esc(v.error)}<br><button class="btn-action btn-link" data-fm-act="retry">Réessayer</button></div>` : '<div class="fm-skel"></div><div class="fm-skel"></div><div class="fm-skel"></div>'}</div>`;
     return;
   }
-
-  tbody.innerHTML = subs.map(s => {
-    const avatar = s.avatar_url
-      ? `<img class="avatar" src="${esc(s.avatar_url)}" alt="">`
-      : `<span class="avatar-placeholder">${esc((s.pseudo||'?')[0].toUpperCase())}</span>`;
-    const typeLabel = s.type === 'partner' ? '🤝 Partenaire' : '⚔️ Équipe';
-    const date = new Date(s.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-
-    return `<tr>
-      <td>${avatar}<strong>${esc(s.pseudo || s.discord_id)}</strong><br><span class="u-muted-fs-11">${esc(s.discord_id)}</span></td>
-      <td><span class="badge-status badge-active">${typeLabel}</span></td>
-      <td class="u-muted-fs-12">${date}</td>
-      <td><button class="btn-action btn-unlock" onclick="unlockSub('${escJsAttr(s.discord_id)}','${escJsAttr(s.pseudo||s.discord_id)}','${escJsAttr(s.type)}')">Débloquer</button></td>
-    </tr>`;
-  }).join('');
+  const u = d.user, name = u ? (u.pseudo || u.discord_id) : 'Anonyme', st = FM_STATUS[d.review.status] || FM_STATUS.new;
+  const ava = u && u.avatar_url ? `<img class="fm-ava" src="${esc(u.avatar_url)}" alt="">` : `<span class="fm-ava fm-ava-ph">${esc(String(name)[0].toUpperCase())}</span>`;
+  const chips = [`<span class="fm-type fm-t-${esc(v.type)}">${ico} ${esc(label)}</span>`, `<span class="fm-st fm-st-${st[1]}">${st[0]}</span>`];
+  if (fmReserved(v.type)) chips.push(d.locked ? '<span class="fm-chip-ro">🔒 Déjà soumis</span>' : '<span class="fm-chip-ro">🔓 Débloqué</span>');
+  if (u && u.status && u.status !== 'active') chips.push(`<span class="fm-chip-ro fm-chip-warn">Compte ${esc(u.status === 'banned' ? 'banni' : u.status === 'suspended' ? 'suspendu' : u.status)}</span>`);
+  if (u && u.discord_id) chips.push('<button class="fm-chip-btn" data-fm-act="profile">👤 Voir le profil</button>');
+  const facts = [];
+  if (u && u.discord_id) facts.push(['Discord', `<code>${esc(u.discord_id)}</code> <button class="fm-copy" data-fm-copy="${esc(u.discord_id)}" title="Copier l’ID" aria-label="Copier l’ID Discord">⧉</button>`]);
+  if (u && u.minecraft_username) facts.push(['Minecraft', `${esc(u.minecraft_username)}${u.minecraft_uuid ? ` <button class="fm-copy" data-fm-copy="${esc(u.minecraft_uuid)}" title="Copier l’UUID" aria-label="Copier l’UUID">⧉</button>` : ''}`]);
+  if (d.submitted_at) facts.push(['Reçu', `<span title="${esc(fmFull(d.submitted_at))}">${esc(fmFull(d.submitted_at))}</span>`]);
+  let content = '';
+  if (!d.messages.length) {
+    content = `<div class="fm-info">${d.legacy
+      ? 'Le contenu des formulaires n’est pas disponible tant que le Worker n’a pas les routes <code>/admin/forms</code>. Il reste consultable dans le salon Discord.'
+      : 'Le contenu de ce formulaire n’a pas été conservé : il a été envoyé <b>avant l’archivage</b> et reste dans le salon Discord. Les prochains formulaires s’afficheront ici en entier.'}</div>`;
+  } else {
+    content = d.messages.map((m, mi) => {
+      const shorts = m.fields.filter(fmShort), longs = m.fields.filter((f) => !fmShort(f));
+      const val = (f) => (String(f.value).trim() ? fmFmt(f.value) : '<span class="u-muted">—</span>');
+      return (d.messages.length > 1 ? `<div class="fm-msg-h">Envoi ${mi + 1} / ${d.messages.length} · ${esc(fmAgo(m.created_at))}</div>` : '') +
+        (shorts.length ? `<div class="fm-facts">${shorts.map((f) => `<div class="fm-fact"><div class="k">${esc(f.name)}</div><div class="v">${val(f)}</div></div>`).join('')}</div>` : '') +
+        longs.map((f) => `<section class="fm-long"><h4>${esc(f.name)}</h4><div class="v">${val(f)}</div></section>`).join('');
+    }).join('');
+  }
+  const seg = (s, text) => `<button data-fm-status="${s}" class="${d.review.status === s ? 'active' : ''}" aria-pressed="${d.review.status === s}">${text}</button>`;
+  const review = FM.legacy ? '' : `<section class="fm-review"><div class="fm-review-h">Suivi</div>
+      <div class="fm-seg" role="group" aria-label="Statut du formulaire">${seg('seen', '👁 Vu')}${seg('accepted', '✅ Accepté')}${seg('declined', '⛔ Refusé')}${seg('new', '↺ Remettre en nouveau')}</div>
+      <label class="fm-notelab"><span>Note interne <small>(visible par le staff uniquement · Ctrl+Entrée pour enregistrer)</small></span>
+        <textarea id="fm-note-ta" rows="3" maxlength="2000" placeholder="Ex. : à rappeler vendredi, doute sur la motivation…">${esc(d.review.note || '')}</textarea></label>
+      <div class="fm-review-meta"><span id="fm-note-state" aria-live="polite"></span>${d.review.reviewed_at ? `Dernière action ${esc(fmAgo(d.review.reviewed_at))}` : ''}</div></section>`;
+  p.innerHTML = top + `<div class="fm-head">${ava}<div class="fm-headtxt"><h2 class="fm-title" id="fm-title">${esc(name)}</h2><div class="fm-sub">Formulaire ${esc(label.toLowerCase())}</div></div></div>
+    <div class="fm-chips-row">${chips.join('')}</div>
+    <div class="fm-body">${facts.length ? `<div class="fm-facts">${facts.map(([k, vv]) => `<div class="fm-fact"><div class="k">${k}</div><div class="v">${vv}</div></div>`).join('')}</div>` : ''}${content}${review}</div>
+    <div class="fm-foot"><button class="btn-action btn-link" data-fm-act="copy"${d.messages.length ? '' : ' disabled'}>📋 Copier en texte</button>
+      ${fmReserved(v.type) && d.locked ? '<button class="btn-action btn-unlock" data-fm-act="unlock-view">🔓 Débloquer</button>' : ''}<span class="fm-spacer"></span><button class="btn-action btn-link" data-fm-act="close">Fermer</button></div>`;
 }
+function fmApplyReview(type, key, status) {
+  const e = FM.entries.find((x) => x.form_type === type && x.key === key); if (!e || e.status === status) return;
+  if (FM.counts && FM.counts.by_status) { FM.counts.by_status[e.status] = Math.max(0, (FM.counts.by_status[e.status] || 0) - 1); FM.counts.by_status[status] = (FM.counts.by_status[status] || 0) + 1; }
+  e.status = status; fmRenderAll();
+}
+async function fmSetReview(patch, silent) {
+  const v = FM.view; if (!v || !v.data) return;
+  const { type, key } = v;
+  const d = await apiFetch(`/admin/forms/${encodeURIComponent(type)}/${encodeURIComponent(key)}/review`, 'PUT', patch);
+  if (d.error) { if (!silent) toast(errMsg(d), 'error'); return; }
+  if (FM.view && FM.view.type === type && FM.view.key === key) { FM.view.data.review = d.review; fmRenderViewer(); }
+  fmApplyReview(type, key, d.review.status);
+}
+async function fmSaveNote() {
+  clearTimeout(FM.noteTimer);
+  const v = FM.view, ta = fmEl('fm-note-ta'); if (!v || !v.data || !ta || FM.legacy) return;
+  const { type, key } = v, val = ta.value;
+  if (val.trim() === (v.data.review.note || '')) return;
+  const state = fmEl('fm-note-state'); if (state) state.textContent = 'Enregistrement…';
+  const d = await apiFetch(`/admin/forms/${encodeURIComponent(type)}/${encodeURIComponent(key)}/review`, 'PUT', { note: val });
+  if (d.error) { toast(errMsg(d), 'error'); const s2 = fmEl('fm-note-state'); if (s2) s2.textContent = 'Échec de l’enregistrement'; return; }
+  if (FM.view && FM.view.type === type && FM.view.key === key) { FM.view.data.review = d.review; const s2 = fmEl('fm-note-state'); if (s2) s2.textContent = 'Enregistré ✓ · '; }
+}
+function fmViewerClick(e) {
+  const t = e.target.closest('[data-fm-act],[data-fm-status],[data-fm-copy]'); if (!t) return;
+  const v = FM.view;
+  if (t.dataset.fmCopy) { navigator.clipboard?.writeText(t.dataset.fmCopy).then(() => toast('Copié.', 'success'), () => toast('Copie impossible.', 'error')); return; }
+  if (t.dataset.fmStatus) {
+    const ta = fmEl('fm-note-ta'), patch = { status: t.dataset.fmStatus };
+    if (ta && v && v.data && ta.value.trim() !== (v.data.review.note || '')) patch.note = ta.value;   // ne perd jamais une note en cours de frappe
+    fmSetReview(patch); return;
+  }
+  switch (t.dataset.fmAct) {
+    case 'close': fmClose(); break;
+    case 'prev': fmStep(-1); break;
+    case 'next': fmStep(1); break;
+    case 'retry': if (v) fmOpen(v.type, v.key); break;
+    case 'profile': if (v && v.data && v.data.user) openUserCard(v.data.user.discord_id); break;
+    case 'copy': if (v && v.data) navigator.clipboard?.writeText(fmCopyText(v.data)).then(() => toast('Formulaire copié.', 'success'), () => toast('Copie impossible.', 'error')); break;
+    case 'unlock-view': if (v && v.data) unlockSub(v.key, (v.data.user && (v.data.user.pseudo || v.data.user.discord_id)) || v.key, v.type); break;
+  }
+}
+
+/* ───────── Liste : événements ───────── */
+(function fmWire() {
+  const root = fmEl('page-submissions'); if (!root) return;
+  root.addEventListener('click', (e) => {
+    const tab = e.target.closest('[data-fm-tab]'); if (tab) { FM.type = tab.dataset.fmTab || null; currentSubFilter = FM.type; loadSubmissions(FM.type); return; }
+    const chip = e.target.closest('[data-fm-status-filter]'); if (chip) { FM.status = chip.dataset.fmStatusFilter || null; loadSubmissions(undefined); return; }
+    const act = e.target.closest('[data-fm-act]');
+    const row = e.target.closest('tr.fm-row');
+    if (act) {
+      const a = act.dataset.fmAct;
+      if (a === 'refresh') { loadSubmissions(undefined); return; }
+      if (a === 'more') { loadSubmissions(undefined, true); return; }
+      if (a === 'reset') { FM.type = FM.status = null; FM.q = ''; currentSubFilter = null; fmEl('fm-q').value = ''; loadSubmissions(null); return; }
+      if (a === 'unlock' && row) { unlockSub(row.dataset.fmKey, act.dataset.fmPseudo || row.dataset.fmKey, row.dataset.fmType); return; }
+      if (a === 'open' && row) { fmOpen(row.dataset.fmType, row.dataset.fmKey); return; }
+    }
+    if (row) fmOpen(row.dataset.fmType, row.dataset.fmKey);
+  });
+  root.addEventListener('keydown', (e) => {
+    const row = e.target.closest && e.target.closest('tr.fm-row');
+    if (row && e.target === row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); fmOpen(row.dataset.fmType, row.dataset.fmKey); }
+  });
+  fmEl('fm-q').addEventListener('input', (e) => { clearTimeout(FM.qTimer); FM.qTimer = setTimeout(() => { FM.q = e.target.value.trim(); loadSubmissions(undefined); }, 280); });
+  // Phase de capture : on décide AVANT les gestionnaires de la fiche utilisateur et de la palette (sinon un seul Échap fermerait tout).
+  document.addEventListener('keydown', (e) => {
+    const ov = fmEl('fm-overlay'); if (!ov || !ov.classList.contains('open')) return;
+    if (document.getElementById('usercard-overlay')?.classList.contains('open') || document.getElementById('command-palette-overlay')?.classList.contains('open') || document.getElementById('modal-overlay')?.classList.contains('open')) return;
+    if (e.key === 'Escape') { e.preventDefault(); fmClose(); return; }
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || '')) || e.target.isContentEditable;
+    if (!typing && e.key === 'ArrowLeft') { e.preventDefault(); fmStep(-1); }
+    else if (!typing && e.key === 'ArrowRight') { e.preventDefault(); fmStep(1); }
+    else if (e.key === 'Tab') {                                          // le focus reste dans le panneau
+      const f = [...ov.querySelectorAll('button:not([disabled]),a[href],textarea,input,[tabindex="0"]')].filter((x) => x.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === fmEl('fm-panel'))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }, true);
+})();
 
 async function unlockSub(discordId, pseudo, type) {
   const typeLabel = type === 'partner' ? 'partenaire' : 'équipe';
   const ok = await confirm(
     'Débloquer le formulaire',
-    `Permettre à ${pseudo} de soumettre à nouveau le formulaire ${typeLabel} ?`,
+    `Permettre à ${pseudo} de soumettre à nouveau le formulaire ${typeLabel} ? Son envoi actuel reste consultable.`,
     'btn-confirm-ok'
   );
   if (!ok) return;
   const data = await apiFetch(`/submission/${type}?discord_id=${discordId}`, 'DELETE');
   if (data.ok) {
     toast(`Formulaire ${typeLabel} de ${pseudo} débloqué.`, 'success');
-    loadSubmissions(currentSubFilter);
+    await loadSubmissions(undefined);
+    if (FM.view && FM.view.key === discordId && FM.view.type === type) fmOpen(type, discordId, true);
   } else {
     toast(data.error || 'Erreur', 'error');
   }
@@ -6745,26 +7136,14 @@ function healthRows(sv){return Object.keys(sv).filter(function(key){return key!=
   if(key==='storage')return {n:'STOCKAGE',s:sv.storage==='unconfigured'?'bad':'ok',d:sv.storage==='remote'?'Machine de stockage dédiée':sv.storage==='r2'?'Fichiers dans R2':'Machine dédiée demandée, réglages manquants'};
   var ok=sv[key]==='ok';return {n:key==='github'?'GITHUB (RELEASES)':key==='discord'?'CONNEXION DISCORD':key.toUpperCase(),s:ok?'ok':'bad',d:ok?'Disponible':key==='r2'?'Binding R2 manquant':key==='github'?'RELAUNCH_GITHUB_TOKEN manquant':key==='discord'?'DISCORD_CLIENT_ID manquant':'Indisponible'}})}
 async function loadLauncherState(){
-  if(CFG.simulate || stateLoaded || stateLoading || stateLoadError) return;
-
-  stateLoading = true;
-  stateLoadError = '';
-
-  try {
-    var state = await window.apiFetch(ROUTES.state[1], 'GET');
-
-    if(!state || !state.collections) {
-      throw new Error('Réponse d’état launcher invalide.');
-    }
-
-    applyLauncherState(state);
-    stateLoaded = true;
-  } catch(e) {
-    stateLoadError = e.message || String(e);
-  } finally {
-    stateLoading = false;
-    render();
-  }
+  if(CFG.simulate||stateLoaded||stateLoading)return;
+  stateLoading=true;stateLoadError='';
+  try{
+    var state=await window.apiFetch(ROUTES.state[1],'GET');
+    if(!state||!state.collections)throw new Error('Réponse d’état launcher invalide.');
+    applyLauncherState(state);stateLoaded=true;
+  }catch(e){stateLoadError=e.message||String(e)}
+  finally{stateLoading=false;render()}
 }
 function render(){
   renderNav();
@@ -6773,8 +7152,7 @@ function render(){
   if(!CFG.simulate&&!stateLoaded){
     el.innerHTML=stateLoading?'<section class="panel"><p class="soft">Chargement des données ReLaunch depuis le Worker…</p></section>':
       stateLoadError?'<section class="panel"><p class="soft">Échec du chargement : '+esc(stateLoadError)+'</p><button class="btn pri" data-act="reloadState">Réessayer</button></section>':'<section class="panel"><p class="soft">Chargement des données ReLaunch…</p></section>';
-    if(!stateLoading && !stateLoadError) loadLauncherState();
-return;
+    loadLauncherState();return;
   }
   keepFocus(el,function(){
     el.innerHTML=(CFG.simulate?'<div class="simnote"><b>Mode simulation.</b> Chaque action réussit sans rien envoyer au Worker. Les chiffres et les noms sont des exemples.<button class="btn sm u-ml-auto" data-go="integration">Brancher le Worker</button></div>':'')+SEC[S.sec]();
