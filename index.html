@@ -5979,6 +5979,14 @@ var ROUTES={
   cardSave:['PUT','/admin/home/cards/:id','Modifier un encart d\'accueil'],
   cardOrder:['PUT','/admin/home/cards/order','Réordonner les encarts'],
   cardArchive:['DELETE','/admin/home/cards/:id','Archiver un encart'],
+    cardDelete:['DELETE','/admin/home/cards/:id?permanent=1','Supprimer définitivement un encart'],
+    lskinDelete:['DELETE','/admin/launcher-skins/:id','Supprimer un skin du launcher'],
+    packDelete:['DELETE','/admin/modpacks/:id','Supprimer un modpack et ses versions'],
+    serverDelete:['DELETE','/admin/servers/:id','Supprimer un serveur'],
+    eventDelete:['DELETE','/admin/events/:id','Supprimer un event'],
+    partnerDelete:['DELETE','/admin/partners/:id','Supprimer un partenaire'],
+    reportDelete:['DELETE','/admin/reports/:id','Supprimer un signalement'],
+    notifDelete:['DELETE','/admin/notifications/:id','Supprimer ou annuler une notification'],
   carousel:['PUT','/admin/home/carousel','Réglages par défaut du carrousel'],
   newsCreate:['POST','/admin/news','Créer un article Info & News'],
   newsSave:['PUT','/admin/news/:id','Modifier un article'],
@@ -6413,7 +6421,7 @@ SEC.home=function(){
   var cards=DB.cards.map(function(c,i){var s=CSTAT[c.status];
     return '<div class="ecard" data-a="card-'+c.id+'">'+cardPreview(c)+'<div class="meta">'+st(s[0],s[1])+'<span class="sub">'+(c.from?esc(c.from.slice(8)+'/'+c.from.slice(5,7)):'—')+(c.to?' → '+esc(c.to.slice(8)+'/'+c.to.slice(5,7)):'')+' · '+esc(DEST[c.dest])+'</span></div>'+
       '<div class="row" style="gap:4px"><button class="iconbtn" data-act="cardMove" data-i="'+i+'" data-d="-1" aria-label="Monter"'+(i===0?' disabled':'')+'>'+IC.up+'</button><button class="iconbtn" data-act="cardMove" data-i="'+i+'" data-d="1" aria-label="Descendre"'+(i===DB.cards.length-1?' disabled':'')+'>'+IC.down+'</button>'+
-      '<button class="btn sm u-ml-auto" data-act="openCard" data-id="'+c.id+'">'+IC.edit+'Modifier</button><button class="iconbtn" data-act="cardDup" data-id="'+c.id+'" aria-label="Dupliquer">'+IC.copy+'</button><button class="iconbtn" data-act="cardArchive" data-id="'+c.id+'" aria-label="Archiver">'+IC.trash+'</button></div></div>'}).join('');
+      '<button class="btn sm u-ml-auto" data-act="openCard" data-id="'+c.id+'">'+IC.edit+'Modifier</button><button class="iconbtn" data-act="cardDup" data-id="'+c.id+'" aria-label="Dupliquer">'+IC.copy+'</button><button class="iconbtn" data-act="cardDelete" data-id="'+c.id+'" aria-label="Supprimer">'+IC.trash+'</button></div></div>'}).join('');
   return '<section class="panel"><header><div><h2>Carrousel de l\'accueil</h2><p>Réglages par défaut. Les joueurs peuvent les changer dans leurs réglages.</p></div><button class="btn sm pri" data-act="carouselSave">Enregistrer</button></header>'+
     '<div class="row" style="gap:22px"><div class="field"><span>Encarts affichés</span><span class="seg" role="group" aria-label="Encarts affichés">'+[1,2,3,4,5].map(function(n){return '<button data-act="carCount" data-v="'+n+'" aria-pressed="'+(cr.count===n)+'">'+n+'</button>'}).join('')+'</span></div>'+
     '<div class="field"><span>Défilement automatique</span><button class="tog" role="switch" aria-checked="'+cr.autoplay+'" data-act="carAuto" aria-label="Défilement automatique"></button></div>'+
@@ -6442,7 +6450,7 @@ SEC.notifs=function(){
     '</div></section>'+
     '<section class="panel"><header><h2>Aperçu dans le launcher</h2></header><div class="toast" style="max-width:none;animation:none" id="nfPrev"><i style="background:var(--acc)"></i><span><b>'+esc(f.title||'Titre de la notification')+'</b><br><span class="soft">'+esc(f.body||'Le message apparaît ici.')+'</span></span></div><p class="sub">Les notifications sont mises en file et récupérées par le launcher; le Worker ne prétend pas les avoir livrées. Le ciblage par rôle ou par joueur attend la liaison d’identité du launcher.</p></section>'+
   '</div>'+
-  '<div class="tw"><table><thead><tr><th>Créée / prévue</th><th>Titre</th><th>Destinataires</th><th>État</th></tr></thead><tbody>'+DB.notifs.map(function(n){var status=n.status==='queued'?st('info','Dans la file'):n.status==='scheduled'?st('acc','Programmée'):st('off',n.status||'—');return '<tr><td class="num">'+esc(n.t)+'</td><td><b>'+esc(n.title)+'</b></td><td>'+esc(n.aud)+'</td><td>'+status+'</td></tr>'}).join('')+'</tbody></table></div>';
+  '<div class="tw"><table><thead><tr><th>Créée / prévue</th><th>Titre</th><th>Destinataires</th><th>État</th><th></th></tr></thead><tbody>'+DB.notifs.map(function(n){var status=n.status==='queued'?st('info','Dans la file'):n.status==='scheduled'?st('acc','Programmée'):st('off',n.status||'—');return '<tr><td class="num">'+esc(n.t)+'</td><td><b>'+esc(n.title)+'</b></td><td>'+esc(n.aud)+'</td><td>'+status+'</td><td>'+(n.id?'<div class="acts"><button class="iconbtn" data-act="notifDelete" data-id="'+esc(n.id)+'" aria-label="Supprimer ou annuler la notification">'+IC.trash+'</button></div>':'')+'</td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 /* ---------- Skins du launcher ---------- */
@@ -6454,7 +6462,7 @@ var LSST={published:['ok','Publié'],soon:['info','À venir'],off:['off','Désac
 SEC.lskins=function(){
   return '<div class="spread"><p class="sub">Les skins changent tout le launcher. Ceux marqués « À venir » apparaissent verrouillés dans le catalogue des joueurs.</p><div class="row"><button class="btn pri" data-act="openNewLskin">'+IC.plus+'Nouveau skin</button><button class="btn" data-act="openGrant">'+IC.gift+'Offrir un skin</button></div></div>'+
   '<div class="tw"><table><thead><tr><th>Skin</th><th>État</th><th>Déblocage</th><th>Prix</th><th>Versions</th><th>Thème du joueur</th><th>Fichier</th><th>Détenteurs</th><th></th></tr></thead><tbody>'+DB.lskins.map(function(k){var s=LSST[k.status];
-    return '<tr><td><b>'+esc(k.n)+'</b></td><td>'+st(s[0],s[1])+'</td><td>'+esc(howLabel(k.how))+(codeBatches(k)?' <small class="soft">· '+codeBatches(k)+' lot'+(codeBatches(k)>1?'s':'')+' de codes</small>':'')+'</td><td class="num">'+(k.price?fmt(k.price)+' éclats':'—')+'</td><td><div class="chips"><span class="tag">Standard</span>'+(k.lg?'<span class="tag">Liquid Glass</span>':'')+(k.mat?'<span class="tag">Mat</span>':'')+'</div></td><td>'+(k.themed?'Suit le thème':'Couleurs imposées')+'</td><td>'+(k.file&&k.file.id?st('ok','v'+esc(k.file.version)):st('off','Aucun'))+'</td><td class="num">'+fmt(k.owners)+'</td><td><div class="acts">'+(k.id!=='none'?'<button class="btn sm ghost" data-act="openLskin" data-id="'+k.id+'">Modifier</button>':'')+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+    return '<tr><td><b>'+esc(k.n)+'</b></td><td>'+st(s[0],s[1])+'</td><td>'+esc(howLabel(k.how))+(codeBatches(k)?' <small class="soft">· '+codeBatches(k)+' lot'+(codeBatches(k)>1?'s':'')+' de codes</small>':'')+'</td><td class="num">'+(k.price?fmt(k.price)+' éclats':'—')+'</td><td><div class="chips"><span class="tag">Standard</span>'+(k.lg?'<span class="tag">Liquid Glass</span>':'')+(k.mat?'<span class="tag">Mat</span>':'')+'</div></td><td>'+(k.themed?'Suit le thème':'Couleurs imposées')+'</td><td>'+(k.file&&k.file.id?st('ok','v'+esc(k.file.version)):st('off','Aucun'))+'</td><td class="num">'+fmt(k.owners)+'</td><td><div class="acts">'+(k.id!=='none'?'<button class="btn sm ghost" data-act="openLskin" data-id="'+k.id+'">Modifier</button><button class="iconbtn" data-act="lskinDelete" data-id="'+k.id+'" aria-label="Supprimer le skin">'+IC.trash+'</button>':'')+'</div></td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 /* ---------- Modpacks ---------- */
@@ -6463,7 +6471,7 @@ SEC.modpacks=function(){
   '<div class="tw"><table><thead><tr><th>Modpack</th><th>Minecraft</th><th>Loader</th><th>Version</th><th>Mods</th><th>Taille</th><th>Manifest</th><th>Installations</th><th>Visible</th><th></th></tr></thead><tbody>'+DB.modpacks.map(function(m,i){
     return '<tr><td><div class="who2"><span class="head" style="--c1:'+m.c1+';--c2:'+m.c2+'">'+initials(m.n)+'</span><b>'+esc(m.n)+'</b></div></td><td class="num">'+m.mc+'</td><td>'+esc(m.loader)+'</td><td class="mono">'+esc(m.ver)+'</td><td class="num">'+m.mods+'</td><td class="num">'+m.size+'</td><td>'+(m.sig?st('ok','Signé'):st('bad','Non signé'))+'</td><td class="num">'+fmt(m.installs)+'</td>'+
       '<td><button class="tog" role="switch" aria-checked="'+m.visible+'" data-act="packVisible" data-i="'+i+'" aria-label="Afficher '+esc(m.n)+'"></button></td>'+
-      '<td><div class="acts"><button class="btn sm ghost" data-act="packVerify" data-i="'+i+'">Vérifier</button><button class="btn sm" data-act="openPack" data-id="'+m.id+'">'+IC.upload+'Nouvelle version</button></div></td></tr>'}).join('')+'</tbody></table></div>';
+      '<td><div class="acts"><button class="btn sm ghost" data-act="packVerify" data-i="'+i+'">Vérifier</button><button class="btn sm" data-act="openPack" data-id="'+m.id+'">'+IC.upload+'Nouvelle version</button><button class="iconbtn" data-act="packDelete" data-id="'+m.id+'" aria-label="Supprimer le modpack">'+IC.trash+'</button></div></td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 var SEC_modpacksBase=SEC.modpacks;
@@ -6483,7 +6491,7 @@ SEC.servers=function(){
   return '<div class="spread"><p class="sub">Les adresses et réglages définissent les serveurs proposés au launcher.</p><button class="btn pri" data-act="openNewServer">'+IC.plus+'Nouveau serveur</button></div>'+
   '<div class="tw"><table><thead><tr><th>Serveur</th><th>Adresse</th><th>État</th><th>Joueurs</th><th>Modpack requis</th><th>Event</th><th></th></tr></thead><tbody>'+DB.servers.map(function(s,i){var x=SVST[s.state];
     return '<tr><td><b>'+esc(s.n)+'</b></td><td class="mono">'+esc(s.host)+'</td><td>'+st(x[0],x[1])+'</td><td style="min-width:140px"><span class="num">'+s.players+' / '+s.max+'</span><div class="bar" style="margin-top:4px"><i style="width:'+Math.round(s.players/s.max*100)+'%"></i></div></td><td>'+esc(packName(s.pack))+'</td><td>'+esc(eventName(s.event))+'</td>'+
-    '<td><div class="acts">'+(s.state==='maintenance'?'<button class="btn sm" data-act="srvMaint" data-i="'+i+'" data-v="0">Rouvrir</button>':'<button class="btn sm ghost" data-act="srvMaint" data-i="'+i+'" data-v="1">Maintenance</button>')+'<button class="btn sm ghost" data-act="openServer" data-id="'+s.id+'">Modifier</button></div></td></tr>'}).join('')+'</tbody></table></div>';
+    '<td><div class="acts">'+(s.state==='maintenance'?'<button class="btn sm" data-act="srvMaint" data-i="'+i+'" data-v="0">Rouvrir</button>':'<button class="btn sm ghost" data-act="srvMaint" data-i="'+i+'" data-v="1">Maintenance</button>')+'<button class="btn sm ghost" data-act="openServer" data-id="'+s.id+'">Modifier</button><button class="iconbtn" data-act="serverDelete" data-id="'+s.id+'" aria-label="Supprimer le serveur">'+IC.trash+'</button></div></td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 /* ---------- Events ---------- */
@@ -6493,7 +6501,7 @@ SEC.events=function(){
   return '<div class="spread"><p class="sub">Les events apparaissent dans l\'espace ReLaunch du launcher, avec le modpack et le serveur à rejoindre.</p><button class="btn pri" data-act="openEvent">'+IC.plus+'Nouvel event</button></div>'+
   '<div class="calendar">'+DB.events.map(function(e){var d=new Date(e.date),s=EVST[e.state];
     return '<div class="ev" data-a="event-'+e.id+'"><div class="dt"><b>'+d.getDate()+'</b><small>'+MO[d.getMonth()]+'</small></div><div style="min-width:0"><h3>'+esc(e.n)+'</h3><p class="sub">'+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' · '+esc((DB.servers.filter(function(x){return x.id===e.server})[0]||{}).n||'—')+' · '+esc(packName(e.pack))+' · '+e.slots+' places</p></div>'+
-      '<div class="row">'+st(s[0],s[1])+(e.apps.length?'<button class="btn sm" data-act="openApps" data-id="'+e.id+'">'+e.apps.length+' candidature'+(e.apps.length>1?'s':'')+'</button>':'')+'<button class="btn sm ghost" data-act="openEvent" data-id="'+e.id+'">Modifier</button></div></div>'}).join('')+'</div>';
+      '<div class="row">'+st(s[0],s[1])+(e.apps.length?'<button class="btn sm" data-act="openApps" data-id="'+e.id+'">'+e.apps.length+' candidature'+(e.apps.length>1?'s':'')+'</button>':'')+'<button class="btn sm ghost" data-act="openEvent" data-id="'+e.id+'">Modifier</button><button class="iconbtn" data-act="eventDelete" data-id="'+e.id+'" aria-label="Supprimer l’event">'+IC.trash+'</button></div></div>'}).join('')+'</div>';
 };
 
 /* ---------- Partenaires ---------- */
@@ -6501,7 +6509,7 @@ SEC.partners=function(){
   return '<div class="spread"><p class="sub">Les partenaires en direct apparaissent dans « Diffusion partenaires ». Ceux mis en avant passent en premier dans WeLive.</p><button class="btn pri" data-act="openPartner">'+IC.plus+'Ajouter un partenaire</button></div>'+
   '<div class="tw"><table><thead><tr><th>Partenaire</th><th>Chaîne Twitch</th><th>Direct</th><th>Catégorie</th><th>Mis en avant</th><th></th></tr></thead><tbody>'+DB.partners.map(function(p,i){
     return '<tr><td><div class="who2"><span class="head" style="--c1:#4c1d95;--c2:#a78bfa">'+initials(p.n)+'</span><b>'+esc(p.n)+'</b></div></td><td><a class="mono" href="https://www.twitch.tv/'+encodeURIComponent(p.ch)+'" target="_blank" rel="noopener">twitch.tv/'+esc(p.ch)+'</a></td><td>'+(p.live?st('bad','En direct · '+fmt(p.viewers)):st('off','Hors ligne'))+'</td><td>'+esc(p.cat)+'</td>'+
-    '<td><button class="tog" role="switch" aria-checked="'+p.featured+'" data-act="partnerFeat" data-i="'+i+'" aria-label="Mettre en avant '+esc(p.n)+'"></button></td><td><div class="acts"><button class="btn sm ghost" data-act="openPartner" data-id="'+p.id+'">Modifier</button></div></td></tr>'}).join('')+'</tbody></table></div>';
+    '<td><button class="tog" role="switch" aria-checked="'+p.featured+'" data-act="partnerFeat" data-i="'+i+'" aria-label="Mettre en avant '+esc(p.n)+'"></button></td><td><div class="acts"><button class="btn sm ghost" data-act="openPartner" data-id="'+p.id+'">Modifier</button><button class="iconbtn" data-act="partnerDelete" data-id="'+p.id+'" aria-label="Supprimer le partenaire">'+IC.trash+'</button></div></td></tr>'}).join('')+'</tbody></table></div>';
 };
 
 /* ---------- Joueurs ---------- */
@@ -6515,7 +6523,7 @@ SEC.reports=function(){
   return '<div class="spread"><span class="seg" role="group" aria-label="Filtre"><button data-act="repF" data-v="open" aria-pressed="'+(f==='open')+'">Ouverts ('+cnt('open')+')</button><button data-act="repF" data-v="assigned" aria-pressed="'+(f==='assigned')+'">Assignés ('+cnt('assigned')+')</button><button data-act="repF" data-v="closed" aria-pressed="'+(f==='closed')+'">Clos</button><button data-act="repF" data-v="all" aria-pressed="'+(f==='all')+'">Tous</button></span><p class="sub">Les signalements arrivent depuis le menu staff et le jeu.</p></div>'+
   '<div class="tw"><table><thead><tr><th>Joueur signalé</th><th>Motif</th><th>Lieu</th><th>Signalé par</th><th>Quand</th><th>État</th><th></th></tr></thead><tbody>'+(list.map(function(r){var s=RST[r.state];
     return '<tr><td><b>'+esc(r.who)+'</b></td><td>'+esc(r.reason)+'</td><td>'+esc(r.where)+'</td><td>'+esc(r.by)+'</td><td>'+esc(r.when)+'</td><td>'+st(s[0],s[1]+(r.assignee?' · '+r.assignee:''))+'</td>'+
-    '<td><div class="acts">'+(r.state!=='closed'?(r.state==='open'?'<button class="btn sm ghost" data-act="repAssign" data-id="'+r.id+'">M\'assigner</button>':'')+'<button class="btn sm" data-act="repSanction" data-id="'+r.id+'">Sanctionner</button><button class="btn sm ghost" data-act="repClose" data-id="'+r.id+'">Classer</button>':'')+'</div></td></tr>'}).join('')||'<tr><td colspan="7" class="empty">Aucun signalement ici.</td></tr>')+'</tbody></table></div>';
+    '<td><div class="acts">'+(r.state!=='closed'?(r.state==='open'?'<button class="btn sm ghost" data-act="repAssign" data-id="'+r.id+'">M\'assigner</button>':'')+'<button class="btn sm" data-act="repSanction" data-id="'+r.id+'">Sanctionner</button><button class="btn sm ghost" data-act="repClose" data-id="'+r.id+'">Classer</button>':'')+'<button class="iconbtn" data-act="reportDelete" data-id="'+r.id+'" aria-label="Supprimer le signalement">'+IC.trash+'</button></div></td></tr>'}).join('')||'<tr><td colspan="7" class="empty">Aucun signalement ici.</td></tr>')+'</tbody></table></div>';
 };
 var SEC_reportsBase=SEC.reports;
 SEC.reports=function(){
@@ -6621,7 +6629,7 @@ DR.lskin=function(d){var x=d.draft;
         F('Archive',fileBox('lskinFile','Fichier .rlskin','.rlskin,.zip',x.upName?x.upName+' · '+x.upSize:''),x.upSha?'SHA-256 : <span class="hash">'+x.upSha+'</span>':'Fabriquée et signée avec tools/relaunch-skin.mjs.')+
         F('Signature',fileBox('lskinSig','Fichier .sig','.sig,.txt',x.upSig||''))+
         '<div class="row"><button class="btn sm pri" data-act="lskinUpload">'+IC.upload+'Publier ce fichier</button>'+(x.file&&x.file.id?'<button class="btn sm danger" data-act="lskinFileRemove">Retirer le fichier publié</button>':'')+'</div></div></section>'+lskinCodesBox(d):'<p class="sub">Enregistre d’abord la fiche : l’envoi du fichier .rlskin se fait ensuite depuis « Modifier ».</p>'),
-    foot:'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="lskinSave">Enregistrer</button>'};
+    foot:(d.id?'<button class="btn danger" data-act="lskinDelete" data-id="'+esc(d.id)+'" style="margin-right:auto">Supprimer</button>':'')+'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="lskinSave">Enregistrer</button>'};
 };
 /* Codes de déblocage : un code = un skin, N utilisations ; montré une seule fois (le Worker ne garde qu’une empreinte). */
 function lskinCodesBox(d){var x=d.draft,batches={};
@@ -6659,7 +6667,7 @@ DR.packCreate=function(d){var x=d.draft;
 };
 DR.server=function(d){var x=d.draft;
   return {title:(d.id?'Serveur · ':'Nouveau serveur · ')+x.n,body:'<div class="form">'+F('Nom',I('n',x.n))+F('Adresse',I('host',x.host,'class="mono" placeholder="play.example.fr:25565"'))+'<div class="two">'+F('Places',N('max',x.max,'min="1"'))+F('Modpack lié',SEL('pack',x.pack,[['','Aucun']].concat(DB.modpacks.map(function(m){return [m.id,m.n]}))),'Un modpack = un serveur : c\u2019est le serveur rejoint par le compte non officiel quand le joueur lance ce modpack.')+'</div>'+F('Event lié',SEL('event',x.event,[['','Aucun']].concat(DB.events.map(function(e){return [e.id,e.n]}))))+'</div>',
-    foot:'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="serverSave">Enregistrer</button>'};
+    foot:(d.id?'<button class="btn danger" data-act="serverDelete" data-id="'+esc(d.id)+'" style="margin-right:auto">Supprimer</button>':'')+'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="serverSave">Enregistrer</button>'};
 };
 /* Rappel affiché à la création d'un event et à l'envoi d'un modpack d'event (règles d'usage de Minecraft) */
 var EVENT_RULES='<div class="panel u-bg-panel-2"><b>Rappel avant de publier</b><ul class="soft" style="margin:6px 0 0;padding-left:18px">'+
@@ -6676,7 +6684,7 @@ DR.event=function(d){var x=d.draft;
     CHK('requireMicrosoft',x.requireMicrosoft,'Compte Microsoft connecté dans ReLaunch obligatoire')+'<p class="sub" style="margin:-4px 0 0">Coché : le modpack de cet event ne se lance qu\'avec le compte Microsoft connecté dans ReLaunch (lancement direct), jamais via le launcher officiel, et ce compte est lié au compte ReLink du joueur. Tant que Mojang n\'a pas validé l\'application WeCraft, personne ne pourra lancer ce modpack. À compléter côté serveur (mode online ou plugin ReLink).</p>'+
     (x.requireMicrosoft?'<p class="sub u-m-0">Comptes hors-ligne : indisponibles tant que le compte Microsoft est obligatoire.</p>':CHK('allowOffline',x.allowOffline,'Comptes hors-ligne acceptés')+'<p class="sub" style="margin:-4px 0 0">Par défaut, un joueur en compte hors-ligne ne peut lancer <b>aucune</b> instance, event compris. Coché : il peut lancer cet event, et ReLaunch le connecte <b>automatiquement</b> au serveur ci-dessous, sans écran de choix ni possibilité d\'annuler. Son pseudo est vérifié par ReLink (jamais un pseudo de compte officiel). Le serveur doit accepter les comptes hors-ligne (online-mode=false) : protège-le (whitelist ou plugin ReLink), sinon n\'importe qui peut s\'y connecter.</p>'+(x.allowOffline?F('Serveur des comptes hors-ligne',I('offlineHost',x.offlineHost||'','class="mono" placeholder="play.example.fr:25565"'),'Obligatoire : adresse où les comptes hors-ligne sont connectés (domaine ou IP, port facultatif).'):''))+
     (d.id?'':CHK('card',x.card,'Créer aussi un encart d\'accueil en brouillon'))+EVENT_RULES+'</div>',
-    foot:'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="eventSave">'+(d.id?'Enregistrer':'Créer l\'event')+'</button>'};
+    foot:(d.id?'<button class="btn danger" data-act="eventDelete" data-id="'+esc(d.id)+'" style="margin-right:auto">Supprimer</button>':'')+'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="eventSave">'+(d.id?'Enregistrer':'Créer l\'event')+'</button>'};
 };
 DR.apps=function(d){var e=byId(DB.events,d.id);
   return {title:'Candidatures · '+e.n,body:e.apps.length?e.apps.map(function(a){return '<div class="panel u-bg-panel-2"><div class="spread"><b>'+esc(a.who)+'</b><span class="sub">'+esc(a.when)+'</span></div><p class="soft">'+esc(a.msg)+'</p><div class="row end"><button class="btn sm ghost" data-act="appDecide" data-app="'+a.id+'" data-v="refuse">Refuser</button><button class="btn sm pri" data-act="appDecide" data-app="'+a.id+'" data-v="accept">'+IC.check+'Accepter</button></div></div>'}).join(''):'<div class="empty">Toutes les candidatures sont traitées.</div>',
@@ -6684,7 +6692,7 @@ DR.apps=function(d){var e=byId(DB.events,d.id);
 };
 DR.partner=function(d){var x=d.draft;
   return {title:d.id?'Modifier le partenaire':'Nouveau partenaire',body:errBox(x)+'<div class="form">'+F('Nom affiché',I('n',x.n))+F('Chaîne Twitch',I('ch',x.ch,'class="mono" placeholder="nom_de_chaine"'),'Le direct est détecté par le Worker.')+F('Catégorie',I('cat',x.cat))+CHK('featured',x.featured,'Mettre en avant dans WeLive')+'</div>',
-    foot:'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="partnerSave">Enregistrer</button>'};
+    foot:(d.id?'<button class="btn danger" data-act="partnerDelete" data-id="'+esc(d.id)+'" style="margin-right:auto">Supprimer</button>':'')+'<button class="btn ghost" data-act="closeDrawer">Annuler</button><button class="btn pri" data-act="partnerSave">Enregistrer</button>'};
 };
 var LIVE={
   rollout:function(d){$('roV').textContent=d.draft.pct+' %';var b=document.querySelector('[data-act="rolloutSave"]');if(b)b.textContent='Appliquer '+d.draft.pct+' %'},
@@ -6921,6 +6929,43 @@ ACT.cardMakeNews=function(){var d=S.drawer,x=d.draft;
   openDrawer({kind:'news',id:null,draft:{title:String(x.title).trim(),tags:CARD_NTAG[x.type]||'Communauté',date:x.from||'',status:x.status||'draft',body:x.sub?String(x.sub)+'\n\n':'',views:0,notify:false,err:'',featured:true,_card:card}})};
 ACT.newsBack=function(){var x=S.drawer.draft;openDrawer({kind:'card',id:x._card.id||null,draft:x._card})};
 
+/* -- Supprimer les ajouts : encarts, skins, modpacks, serveurs, events, partenaires, signalements, notifications -- */
+// Chaque suppression demande confirmation (saisie du nom pour les plus lourdes) et le Worker refuse ce qui casserait quelque chose
+// (skin acheté en éclats, modpack ou serveur encore utilisé). Les noms insérés dans le texte sont échappés.
+function dropById(list,id){var i=list.findIndex(function(x){return x.id===id});if(i>=0)list.splice(i,1)}
+function nameOf(o){return o&&(o.n||o.name||o.title||o.who)||''}
+ACT.cardDelete=async function(b){var c=byId(DB.cards,b.dataset.id);if(!c)return;
+  if(!(await confirmBox({title:'Supprimer « '+c.title+' » ?',text:'L’encart disparaît <b>définitivement</b> de l’accueil du launcher. Son image de bannière reste dans « Stockage » : supprime-la là si tu n’en as plus besoin.',ok:'Supprimer l’encart',danger:true})))return;
+  run(b,'cardDelete',{id:c.id},null,{ok:'Encart supprimé',target:c.title,after:function(){dropById(DB.cards,c.id)}})};
+ACT.lskinDelete=async function(b){var k=byId(DB.lskins,b.dataset.id);if(!k||k.id==='none')return;
+  var codes=DB.skinCodes.filter(function(c){return c.skinId===k.id}).length;
+  if(!(await confirmBox({title:'Supprimer le skin « '+nameOf(k)+' » ?',text:'Le skin disparaît du launcher avec ses fichiers publiés'+(codes?', ses '+codes+' code'+(codes>1?'s':'')+' de déblocage':'')+' et les skins offerts par le staff ou par code. <b>Si des joueurs l’ont acheté avec des éclats, la suppression est refusée</b> : passe-le alors en « Désactivé ».',ok:'Supprimer le skin',danger:true,word:nameOf(k)})))return;
+  run(b,'lskinDelete',{id:k.id},null,{ok:'Skin supprimé',target:nameOf(k),close:!!S.drawer,after:function(){dropById(DB.lskins,k.id);DB.skinCodes=DB.skinCodes.filter(function(c){return c.skinId!==k.id})}})};
+ACT.packDelete=async function(b){var m=byId(DB.modpacks,b.dataset.id);if(!m)return;
+  var used=DB.servers.filter(function(s){return s.pack===m.id}).map(nameOf).concat(DB.events.filter(function(e){return e.pack===m.id}).map(nameOf));
+  if(used.length){toast('Modpack encore utilisé','Retire-le d’abord de : '+used.join(', '),'err');return}
+  if(!(await confirmBox({title:'Supprimer le modpack « '+nameOf(m)+' » ?',text:'Le modpack et <b>toutes ses versions</b> (manifestes, signatures, archive d’overrides) sont supprimés, fichiers compris. Les mods hébergés restent dans « Stockage ».',ok:'Supprimer le modpack',danger:true,word:nameOf(m)})))return;
+  run(b,'packDelete',{id:m.id},null,{ok:'Modpack supprimé',target:nameOf(m),close:!!S.drawer,after:function(){dropById(DB.modpacks,m.id)}})};
+ACT.serverDelete=async function(b){var s=byId(DB.servers,b.dataset.id);if(!s)return;
+  var ev=DB.events.filter(function(e){return e.server===s.id}).map(nameOf);
+  if(ev.length){toast('Serveur encore utilisé','Il est celui de l’event : '+ev.join(', '),'err');return}
+  if(!(await confirmBox({title:'Supprimer le serveur « '+nameOf(s)+' » ?',text:'Le serveur disparaît du launcher et de la liste des joueurs.',ok:'Supprimer le serveur',danger:true})))return;
+  run(b,'serverDelete',{id:s.id},null,{ok:'Serveur supprimé',target:nameOf(s),close:!!S.drawer,after:function(){dropById(DB.servers,s.id)}})};
+ACT.eventDelete=async function(b){var e=byId(DB.events,b.dataset.id);if(!e)return;
+  var apps=Array.isArray(e.apps)?e.apps.length:0;
+  if(!(await confirmBox({title:'Supprimer l’event « '+nameOf(e)+' » ?',text:'L’event est supprimé définitivement'+(apps?', ainsi que ses <b>'+apps+' candidature'+(apps>1?'s':'')+' en attente</b>':'')+' et les inscriptions faites depuis le site. Pour le garder dans l’historique, passe-le plutôt en « Terminé ».',ok:'Supprimer l’event',danger:true})))return;
+  run(b,'eventDelete',{id:e.id},null,{ok:'Event supprimé',target:nameOf(e),close:!!S.drawer,after:function(){dropById(DB.events,e.id);DB.servers.forEach(function(s){if(s.event===e.id)s.event=''})}})};
+ACT.partnerDelete=async function(b){var p=byId(DB.partners,b.dataset.id);if(!p)return;
+  if(!(await confirmBox({title:'Supprimer le partenaire « '+nameOf(p)+' » ?',text:'Il disparaît du launcher. Pour le retirer sans le perdre, désactive plutôt « Visible ».',ok:'Supprimer le partenaire',danger:true})))return;
+  run(b,'partnerDelete',{id:p.id},null,{ok:'Partenaire supprimé',target:nameOf(p),close:!!S.drawer,after:function(){dropById(DB.partners,p.id)}})};
+ACT.reportDelete=async function(b){var r=byId(DB.reports,b.dataset.id);if(!r)return;
+  if(!(await confirmBox({title:'Supprimer ce signalement ?',text:'Il est supprimé définitivement. Pour le garder dans l’historique, utilise plutôt « Classer ».',ok:'Supprimer le signalement',danger:true})))return;
+  run(b,'reportDelete',{id:r.id},null,{ok:'Signalement supprimé',target:nameOf(r)||r.id,after:function(){dropById(DB.reports,r.id)}})};
+ACT.notifDelete=async function(b){var n=DB.notifs.find(function(x){return x.id===b.dataset.id});if(!n)return;
+  var pending=n.status==='queued'||n.status==='scheduled';
+  if(!(await confirmBox({title:'Supprimer cette notification ?',text:(pending?'Elle n’est pas encore partie pour tout le monde : la supprimer l’<b>annule</b>. ':'')+'Les joueurs qui l’ont déjà reçue la gardent.',ok:pending?'Annuler la notification':'Supprimer',danger:true})))return;
+  run(b,'notifDelete',{id:n.id},null,{ok:pending?'Notification annulée':'Notification supprimée',target:n.title,after:function(){dropById(DB.notifs,n.id)}})};
+
 /* -- Notifications -- */
 var AUDN={all:'Tous les joueurs',beta:'Canal bêta',relaunch:'Joueurs ReLaunch',role:'Rôle',players:'Joueurs précis'};
 ACT.nfWhen=function(b){S.f.notif.when=b.dataset.v;render()};
@@ -7127,7 +7172,7 @@ function applyLauncherState(state){
   var revisions=Array.isArray(state.revisions)?state.revisions:[];
   DB.config={version:revisions.length?revisions[0].version:0,json:revisions.length?JSON.stringify(revisions[0].config,null,2):'{}',
     history:revisions.map(function(r){return {v:r.version,t:r.createdAt||'',who:r.actorId||'—',d:'Configuration publiée'}})};
-  DB.notifs=(state.notifications||[]).map(function(n){return {t:n.createdAt||n.sendAt||'',title:n.title||'',aud:n.audience||'',sent:0,open:0,status:n.status}});
+  DB.notifs=(state.notifications||[]).map(function(n){return {id:n.id,t:n.createdAt||n.sendAt||'',title:n.title||'',aud:n.audience||'',sent:0,open:0,status:n.status}});
   DB.launcherMetrics=state.metrics||{};
   DB.health=healthRows(state.services||{});
   GH_READY=(state.services||{}).github==='ok';
