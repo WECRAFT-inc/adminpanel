@@ -7216,7 +7216,8 @@ function render(){
   if(!CFG.simulate&&!stateLoaded){
     el.innerHTML=stateLoading?'<section class="panel"><p class="soft">Chargement des données ReLaunch depuis le Worker…</p></section>':
       stateLoadError?'<section class="panel"><p class="soft">Échec du chargement : '+esc(stateLoadError)+'</p><button class="btn pri" data-act="reloadState">Réessayer</button></section>':'<section class="panel"><p class="soft">Chargement des données ReLaunch…</p></section>';
-    loadLauncherState();return;
+    if(!stateLoadError) loadLauncherState();
+    return;
   }
   keepFocus(el,function(){
     el.innerHTML=(CFG.simulate?'<div class="simnote"><b>Mode simulation.</b> Chaque action réussit sans rien envoyer au Worker. Les chiffres et les noms sont des exemples.<button class="btn sm u-ml-auto" data-go="integration">Brancher le Worker</button></div>':'')+SEC[S.sec]();
