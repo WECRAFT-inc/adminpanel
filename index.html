@@ -2592,10 +2592,18 @@ async function handleDiscordCallback() {
       headers: { Authorization: `Bearer ${authData.access_token}` },
     });
     const permData = await permRes.json();
-    if (!permData.permissions?.includes('admin.access')) {
-      showError(`Connecté en tant que ${authData.pseudo || 'Discord'}, mais ce compte n'a pas la permission admin.access (rôle "administrator" en scope global requis).`);
-      return;
-    }
+   
+   console.log('[PERMISSIONS]', permData);
+
+if (!permRes.ok) {
+  showError('Erreur de vérification des permissions : HTTP ' + permRes.status);
+  return;
+}
+
+if (!permData.permissions?.includes('admin.access')) {
+  showError('Discord connecté, mais permission admin.access absente.');
+  return;
+}
 
     ACCESS_TOKEN = authData.access_token;
     AUTH_MODE = 'bearer';
@@ -2620,11 +2628,11 @@ async function apiFetch(path, method = 'GET', body = null) {
   const tmo = setTimeout(() => { if (ctl) ctl.abort(); }, isFormData ? 120000 : 20000);
   let r;
  console.log('[DEBUG API]', {
-  worker: WORKER_URL,
+  worker: ,
   path: path,
-  adresseFinale: WORKER_URL + path
+  adresseFinale:  + path
 });
-  try { r = await fetch(WORKER_URL + path, ctl ? { ...opts, signal: ctl.signal } : opts); }
+  try { r = await fetch( + path, ctl ? { ...opts, signal: ctl.signal } : opts); }
   catch (e) {
     return { ok: false, status: 0, error: e && e.name === 'AbortError'
       ? 'Le serveur met trop de temps à répondre (délai dépassé).'
@@ -2770,7 +2778,7 @@ async function loadDashboard() {
   const safe = p => apiFetch(p).catch(e => ({ error: String(e) }));
   try {
     const t0 = performance.now();
-    const healthP = fetch(`${WORKER_URL}/health`).then(async r => ({ ok: r.ok, ms: Math.round(performance.now() - t0), body: await r.json().catch(() => ({})) })).catch(() => ({ ok: false, ms: 0, body: {} }));
+    const healthP = fetch(`${}/health`).then(async r => ({ ok: r.ok, ms: Math.round(performance.now() - t0), body: await r.json().catch(() => ({})) })).catch(() => ({ ok: false, ms: 0, body: {} }));
     const [health, uAll, uSus, uBan, uAdm, subs, pend, done, sites, audit, hooks, svc, ident] = await Promise.all([
       healthP,
       safe('/admin/users?limit=1'), safe('/admin/users?limit=1&status=suspended'), safe('/admin/users?limit=1&status=banned'), safe('/admin/users?limit=1&role=administrator'),
@@ -3743,14 +3751,14 @@ function renderSite() {
         </div>
         <pre class="u-codebox">${esc(MANIFEST_EXAMPLE)}</pre>
         <div class="u-muted-fs-12-m-12-0-6">
-          2. Au chargement, le site lit son état : <code>GET ${esc(WORKER_URL)}/flags?site=${slug}</code>
+          2. Au chargement, le site lit son état : <code>GET ${esc()}/flags?site=${slug}</code>
           → <code>{ site_enabled, require_auth, sections: { home: true, … } }</code>
         </div>
         <div class="u-muted-fs-12-m-12-0-6">
           3. (Optionnel, déploiement automatique) crée un service nommé <code>${slug}</code> avec un scope <code>sites.register</code>
           dans « Services &amp; clés API », puis depuis ta CI :
         </div>
-        <pre class="u-codebox">curl -X POST ${esc(WORKER_URL)}/sites/register \\
+        <pre class="u-codebox">curl -X POST ${esc()}/sites/register \\
   -H "X-Service-Key: $RELINK_KEY" -H "Content-Type: application/json" \\
   -d @relink.manifest.json</pre>
       </details>
@@ -4055,7 +4063,7 @@ function renderMc() {
         <div style="font-size:11px;color:var(--muted);margin-top:10px;">Pour ajouter quelqu'un : ouvre sa fiche (page Utilisateurs), choisis la portée « ${esc(ucScopeLabel('mc:' + s.slug))} », puis le rôle. Un rôle donné en « global » s'applique aussi ici.</div>
       </div></details>`;
 
-  const WK = esc(WORKER_URL);
+  const WK = esc();
   const integ = `<div class="card"><details>
       <summary style="cursor:pointer;font-size:13px;font-weight:600;">📘 Brancher le mod / plugin de ce serveur</summary>
       <div class="u-muted-fs-12-m-12-0-6">0. Appairage : « 🔗 Code de connexion » ci-dessus, puis <code>/relink connect &lt;code&gt;</code> sur le serveur — le mod récupère sa clé tout seul. Ensuite :</div>
@@ -5311,7 +5319,7 @@ function escJsAttr(s) {
 // ── Auth screen — champ URL ────────────────────────────────────────────────
 // Pré-rempli avec l'URL de prod par défaut (adresse publique, pas un secret),
 // mais modifiable : ce que tu tapes est retenu pour la suite.
-const DEFAULT_WORKER_URL = 'https://relink-auth.refugeemeraudien-direction.workers.dev';
+const DEFAULT_ = 'https://relink-auth.refugeemeraudien-direction.workers.dev';
 (function() {
   const authCard = document.querySelector('.auth-card');
   const input = document.getElementById('secret-input');
