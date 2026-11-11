@@ -2627,12 +2627,18 @@ async function apiFetch(path, method = 'GET', body = null) {
   const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
   const tmo = setTimeout(() => { if (ctl) ctl.abort(); }, isFormData ? 120000 : 20000);
   let r;
- console.log('[DEBUG API]', {
-  worker: ,
-  path: path,
-  adresseFinale:  + path
-});
-  try { r = await fetch( + path, ctl ? { ...opts, signal: ctl.signal } : opts); }
+   console.log('[DEBUG API]', {
+    worker: WORKER_URL,
+    path: path,
+    adresseFinale: WORKER_URL + path
+  });
+
+  try {
+    r = await fetch(
+      WORKER_URL + path,
+      ctl ? { ...opts, signal: ctl.signal } : opts
+    );
+  }
   catch (e) {
     return { ok: false, status: 0, error: e && e.name === 'AbortError'
       ? 'Le serveur met trop de temps à répondre (délai dépassé).'
