@@ -2784,7 +2784,7 @@ async function loadDashboard() {
   const safe = p => apiFetch(p).catch(e => ({ error: String(e) }));
   try {
     const t0 = performance.now();
-    const healthP = fetch(`${}/health`).then(async r => ({ ok: r.ok, ms: Math.round(performance.now() - t0), body: await r.json().catch(() => ({})) })).catch(() => ({ ok: false, ms: 0, body: {} }));
+    const healthP = fetch(`${WORKER_URL}/health`).then(async r => ({ ok: r.ok, ms: Math.round(performance.now() - t0), body: await r.json().catch(() => ({})) })).catch(() => ({ ok: false, ms: 0, body: {} }));
     const [health, uAll, uSus, uBan, uAdm, subs, pend, done, sites, audit, hooks, svc, ident] = await Promise.all([
       healthP,
       safe('/admin/users?limit=1'), safe('/admin/users?limit=1&status=suspended'), safe('/admin/users?limit=1&status=banned'), safe('/admin/users?limit=1&role=administrator'),
