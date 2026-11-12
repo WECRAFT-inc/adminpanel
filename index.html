@@ -2393,6 +2393,8 @@
 </div>
 
 <script>
+// URL publique du Worker : valeur de secours si aucun réglage n'est enregistré.
+const DEFAULT_WORKER_URL = 'https://relink-auth.refugeemeraudien-direction.workers.dev';
 let ADMIN_SECRET = '';
 let WORKER_URL   = '';
 let AUTH_MODE    = 'secret'; // 'secret' | 'bearer'
@@ -2618,6 +2620,25 @@ if (!permData.permissions?.includes('admin.access')) {
 
 // ── API helper ────────────────────────────────────────────────────────────
 async function apiFetch(path, method = 'GET', body = null) {
+  // Récupère l'URL active, puis le réglage sauvegardé, puis l'URL de production.
+  // Évite qu'un appel API parte par erreur sur le domaine Vercel (URL relative).
+  let workerBase = String(WORKER_URL || '').trim();
+  if (!workerBase) {
+    try { workerBase = String(localStorage.getItem('relink_worker_url') || '').trim(); } catch {}
+  }
+  if (!workerBase) workerBase = DEFAULT_WORKER_URL;
+  workerBase = workerBase.replace(/\/+$/, '');
+  try {
+    const parsedWorker = new URL(workerBase);
+    if (!['https:', 'http:'].includes(parsedWorker.protocol) || parsedWorker.username || parsedWorker.password) {
+      throw new Error('URL Worker invalide');
+    }
+    workerBase = parsedWorker.href.replace(/\/+$/, '');
+  } catch {
+    return { ok: false, status: 0, error: 'URL du Worker invalide ou non configurée.' };
+  }
+  WORKER_URL = workerBase;
+
   const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
   const headers = {};
   if (!isFormData) headers['Content-Type'] = 'application/json';
@@ -2630,14 +2651,14 @@ async function apiFetch(path, method = 'GET', body = null) {
   const tmo = setTimeout(() => { if (ctl) ctl.abort(); }, isFormData ? 120000 : 20000);
   let r;
    console.log('[DEBUG API]', {
-    worker: WORKER_URL,
+    worker: workerBase,
     path: path,
-    adresseFinale: WORKER_URL + path
+    adresseFinale: workerBase + path
   });
 
   try {
     r = await fetch(
-      WORKER_URL + path,
+      workerBase + path,
       ctl ? { ...opts, signal: ctl.signal } : opts
     );
   }
@@ -5327,7 +5348,6 @@ function escJsAttr(s) {
 // ── Auth screen — champ URL ────────────────────────────────────────────────
 // Pré-rempli avec l'URL de prod par défaut (adresse publique, pas un secret),
 // mais modifiable : ce que tu tapes est retenu pour la suite.
-const DEFAULT_WORKER_URL = 'https://relink-auth.refugeemeraudien-direction.workers.dev';
 (function() {
   const authCard = document.querySelector('.auth-card');
   const input = document.getElementById('secret-input');
