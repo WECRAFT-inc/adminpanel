@@ -7221,16 +7221,48 @@ function applyLauncherState(state){
 function healthRows(sv){return Object.keys(sv).filter(function(key){return key!=='releasesRepo'}).map(function(key){
   if(key==='storage')return {n:'STOCKAGE',s:sv.storage==='unconfigured'?'bad':'ok',d:sv.storage==='remote'?'Machine de stockage dédiée':sv.storage==='r2'?'Fichiers dans R2':'Machine dédiée demandée, réglages manquants'};
   var ok=sv[key]==='ok';return {n:key==='github'?'GITHUB (RELEASES)':key==='discord'?'CONNEXION DISCORD':key.toUpperCase(),s:ok?'ok':'bad',d:ok?'Disponible':key==='r2'?'Binding R2 manquant':key==='github'?'RELAUNCH_GITHUB_TOKEN manquant':key==='discord'?'DISCORD_CLIENT_ID manquant':'Indisponible'}})}
-async function loadLauncherState(){
-  if(CFG.simulate||stateLoaded||stateLoading)return;
-  stateLoading=true;stateLoadError='';
-  try{
-    var state=await window.apiFetch(ROUTES.state[1],'GET');
-    if(!state||!state.collections)throw new Error('Réponse d’état launcher invalide.');
-    applyLauncherState(state);stateLoaded=true;
-  }catch(e){stateLoadError=e.message||String(e)}
-  finally{stateLoading=false;render()}
+
+async function loadLauncherState(retry = 0) {
+  if (CFG.simulate || stateLoaded || stateLoading) return;
+
+  // Attendre que la session Discord soit restaurée.
+  if (AUTH_MODE !== 'bearer' || !ACCESS_TOKEN) {
+    if (retry < 20) {
+      setTimeout(() => loadLauncherState(retry + 1), 500);
+    }
+    return;
+  }
+
+  stateLoading = true;
+  stateLoadError = '';
+
+  try {
+    var state = await window.apiFetch(ROUTES.state[1], 'GET');
+
+    if (!state || !state.collections) {
+      throw new Error('Réponse d’état launcher invalide.');
+    }
+
+    applyLauncherState(state);
+    stateLoaded = true;
+
+  } catch (e) {
+    stateLoadError = e.message || String(e);
+
+    // Nouvelle tentative automatique après une erreur temporaire.
+    if (retry < 3) {
+      stateLoading = false;
+      render();
+      setTimeout(() => loadLauncherState(retry + 1), 1500);
+      return;
+    }
+
+  } finally {
+    stateLoading = false;
+    render();
+  }
 }
+
 function render(){
   renderNav();
   document.querySelectorAll('.simbadge').forEach(function(sb){sb.className='simbadge'+(CFG.simulate?'':' live');sb.textContent=CFG.simulate?'SIMULATION':'WORKER RÉEL'});
